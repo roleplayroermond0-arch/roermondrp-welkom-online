@@ -8,11 +8,11 @@ interface HomePageProps {
 
 export const HomePage = ({ setActiveTab }: HomePageProps) => {
   const handleJoinGame = () => {
-    window.open('fivem://connect/your-server-ip', '_blank');
+    window.open('https://cfx.re/join/xk8d3m', '_blank');
   };
 
   const handleDiscord = () => {
-    window.open('https://discord.gg/your-discord', '_blank');
+    window.open('https://discord.gg/YyfjqXSy6k', '_blank');
   };
 
   const features = [
