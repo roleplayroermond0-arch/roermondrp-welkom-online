@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Header } from "@/components/Header";
 import { HomePage } from "@/components/HomePage";
 import { Store } from "@/components/Store";
-import { Info } from "@/components/Info";
 import { Rules } from "@/components/Rules";
 import { Dashboard } from "@/components/Dashboard";
 import { Applications } from "@/components/Applications";
@@ -65,8 +64,6 @@ const Index = () => {
         return <HomePage setActiveTab={setActiveTab} />;
       case 'store':
         return <Store user={user} userBalance={userBalance} />;
-      case 'info':
-        return <Info />;
       case 'rules':
         return <Rules />;
       case 'dashboard':

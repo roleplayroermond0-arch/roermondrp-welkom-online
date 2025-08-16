@@ -4,6 +4,14 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Coins, Car, Package } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import audiRs6 from "@/assets/audi-rs6.jpg";
+import bmwM5 from "@/assets/bmw-m5.jpg";
+import mercedesAmg from "@/assets/mercedes-amg.jpg";
+import teslaModelS from "@/assets/tesla-models.jpg";
+import stepScooter from "@/assets/step-scooter.jpg";
+import goldenWatch from "@/assets/golden-watch.jpg";
+import designerSuit from "@/assets/designer-suit.jpg";
+import vipCrown from "@/assets/vip-crown.jpg";
 
 interface StoreProps {
   user: any;
@@ -23,16 +31,16 @@ export const Store = ({ user, userBalance }: StoreProps) => {
 
   const storeItems = {
     vehicles: [
-      { id: 1, name: "Audi RS6", price: 2500, image: "🚗", category: "Luxury" },
-      { id: 2, name: "BMW M5", price: 2200, image: "🚙", category: "Luxury" },
-      { id: 3, name: "Mercedes AMG GT", price: 3000, image: "🏎️", category: "Sports" },
-      { id: 4, name: "Tesla Model S", price: 2800, image: "⚡", category: "Electric" },
+      { id: 1, name: "Audi RS6", price: 2500, image: audiRs6, category: "Luxury" },
+      { id: 2, name: "BMW M5", price: 2200, image: bmwM5, category: "Luxury" },
+      { id: 3, name: "Mercedes AMG GT", price: 3000, image: mercedesAmg, category: "Sports" },
+      { id: 4, name: "Tesla Model S", price: 2800, image: teslaModelS, category: "Electric" },
     ],
     items: [
-      { id: 5, name: "Step", price: 150, image: "🛴", category: "Transport" },
-      { id: 6, name: "Gouden Horloge", price: 500, image: "⌚", category: "Accessoires" },
-      { id: 7, name: "Designer Pak", price: 300, image: "🤵", category: "Kleding" },
-      { id: 8, name: "VIP Status (30 dagen)", price: 1000, image: "👑", category: "Premium" },
+      { id: 5, name: "Step", price: 150, image: stepScooter, category: "Transport" },
+      { id: 6, name: "Gouden Horloge", price: 500, image: goldenWatch, category: "Accessoires" },
+      { id: 7, name: "Designer Pak", price: 300, image: designerSuit, category: "Kleding" },
+      { id: 8, name: "VIP Status (30 dagen)", price: 1000, image: vipCrown, category: "Premium" },
     ]
   };
 
@@ -92,25 +100,28 @@ export const Store = ({ user, userBalance }: StoreProps) => {
           )}
         </div>
 
-        {/* Coin Packages */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold mb-6">Koop Munten</h2>
-          <div className="grid md:grid-cols-4 gap-6">
+        {/* Coin Packages - Compact Design */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Koop Munten</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {coinPackages.map((pkg) => (
-              <Card key={pkg.id} className="p-6 text-center">
-                <Coins className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-bold mb-2">{pkg.amount.toLocaleString()} Munten</h3>
+              <Card key={pkg.id} className="p-4 text-center hover:border-primary transition-colors">
+                <div className="flex items-center justify-center mb-2">
+                  <Coins className="h-6 w-6 text-primary mr-1" />
+                  <span className="font-bold text-lg">{pkg.amount.toLocaleString()}</span>
+                </div>
                 {pkg.bonus > 0 && (
-                  <Badge variant="secondary" className="mb-2">
-                    +{pkg.bonus} Bonus!
+                  <Badge variant="secondary" className="mb-2 text-xs">
+                    +{pkg.bonus}
                   </Badge>
                 )}
-                <p className="text-2xl font-bold text-primary mb-4">€{pkg.price}</p>
+                <p className="text-xl font-bold text-primary mb-3">€{pkg.price}</p>
                 <Button 
                   onClick={() => handlePurchaseCoins(pkg)}
+                  size="sm"
                   className="w-full"
                 >
-                  Koop Nu
+                  Koop
                 </Button>
               </Card>
             ))}
@@ -138,23 +149,30 @@ export const Store = ({ user, userBalance }: StoreProps) => {
             </Button>
           </div>
 
-          <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {storeItems[selectedCategory as keyof typeof storeItems].map((item) => (
-              <Card key={item.id} className="p-6">
+              <Card key={item.id} className="p-6 hover:border-primary transition-colors">
+                <div className="aspect-video mb-4 rounded-lg overflow-hidden bg-muted">
+                  <img 
+                    src={item.image} 
+                    alt={item.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 <div className="text-center">
-                  <div className="text-4xl mb-4">{item.image}</div>
-                  <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
-                  <Badge variant="secondary" className="mb-2">{item.category}</Badge>
-                  <div className="flex items-center justify-center gap-1 mb-4">
-                    <Coins className="h-4 w-4 text-primary" />
-                    <span className="font-bold">{item.price}</span>
+                  <h3 className="text-xl font-semibold mb-2">{item.name}</h3>
+                  <Badge variant="secondary" className="mb-3">{item.category}</Badge>
+                  <div className="flex items-center justify-center gap-2 mb-4">
+                    <Coins className="h-5 w-5 text-primary" />
+                    <span className="font-bold text-lg">{item.price}</span>
                   </div>
                   <Button 
                     onClick={() => handlePurchaseItem(item)}
                     className="w-full"
+                    size="lg"
                     disabled={!user || userBalance < item.price}
                   >
-                    {!user ? 'Login Vereist' : userBalance < item.price ? 'Onvoldoende Munten' : 'Koop'}
+                    {!user ? 'Login Vereist' : userBalance < item.price ? 'Onvoldoende Munten' : 'Koop Nu'}
                   </Button>
                 </div>
               </Card>
