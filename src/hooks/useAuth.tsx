@@ -9,7 +9,9 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
   verifyOtp: (email: string, otp: string) => Promise<void>
+  updatePassword: (newPassword: string, accessToken?: string) => Promise<void>
 }
+
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
@@ -67,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       toast({
         title: "Verificatie e-mail verzonden",
-        description: "Controleer je e-mail en vul de verificatiecode in.",
+        description: "Controleer je e-mail en klik op de verificatie link",
       })
     } catch (error: any) {
       toast({
@@ -154,15 +156,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false)
     }
   }
+  
+  const updatePassword = async (newPassword: string, accessToken?: string) => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.updateUser(
+        { password: newPassword },
+      
+      );
+      if (error) throw error;
+
+      toast({
+        title: "Wachtwoord aangepast",
+        description: "Je wachtwoord is succesvol gewijzigd.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Reset mislukt",
+        description: error.message,
+        variant: "destructive",
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const value = {
-    user,
-    loading,
-    signUp,
-    signIn,
-    signOut,
-    verifyOtp
-  }
+  user,
+  loading,
+  signUp,
+  signIn,
+  signOut,
+  verifyOtp,
+  updatePassword
+}
+
 
   return (
     <AuthContext.Provider value={value}>

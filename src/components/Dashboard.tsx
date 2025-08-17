@@ -8,6 +8,8 @@ import { User, Coins, ShoppingBag, Mail } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { LoadingScreen } from "@/components/ui/loading";
 import { useToast } from "@/hooks/use-toast";
+import { useSearchParams } from "react-router-dom";
+
 
 interface DashboardProps {
   userBalance: number;
@@ -20,8 +22,11 @@ export const Dashboard = ({ userBalance }: DashboardProps) => {
   const [otp, setOtp] = useState("");
   const [showOtpVerification, setShowOtpVerification] = useState(false);
   const [pendingEmail, setPendingEmail] = useState("");
-  const { user, loading, signUp, signIn, signOut, verifyOtp } = useAuth();
+  const { user, loading, signUp, signIn, signOut, verifyOtp, updatePassword } = useAuth();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const accessToken = searchParams.get("access_token");
+  
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -90,6 +95,81 @@ export const Dashboard = ({ userBalance }: DashboardProps) => {
   if (loading) {
     return <LoadingScreen text="Laden..." />;
   }
+if (accessToken) {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center animate-fade-in">
+      <Card className="max-w-md mx-auto p-6 animate-scale-in">
+        <div className="text-center mb-6">
+          <Lock className="h-12 w-12 text-primary mx-auto mb-4" />
+          <h1 className="text-2xl font-bold">Reset je wachtwoord</h1>
+          <p className="text-muted-foreground mt-2">
+            Kies een nieuw wachtwoord voor je account.
+          </p>
+        </div>
+
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (!password || !confirmPassword) {
+              toast({
+                title: "Fout",
+                description: "Vul beide velden in.",
+                variant: "destructive",
+              });
+              return;
+            }
+            if (password !== confirmPassword) {
+              toast({
+                title: "Fout",
+                description: "Wachtwoorden komen niet overeen.",
+                variant: "destructive",
+              });
+              return;
+            }
+            try {
+              await updatePassword(password, accessToken);
+              toast({
+                title: "Succes",
+                description: "Je wachtwoord is aangepast.",
+              });
+            } catch {
+              toast({
+                title: "Fout",
+                description: "Reset mislukt.",
+                variant: "destructive",
+              });
+            }
+          }}
+          className="space-y-4"
+        >
+          <div>
+            <Label htmlFor="password">Nieuw wachtwoord</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+            />
+          </div>
+          <div>
+            <Label htmlFor="confirmPassword">Bevestig wachtwoord</Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="••••••••"
+            />
+          </div>
+          <Button type="submit" className="w-full">
+            Wachtwoord resetten
+          </Button>
+        </form>
+      </Card>
+    </div>
+  );
+}
 
   if (showOtpVerification) {
     return (
@@ -148,7 +228,8 @@ export const Dashboard = ({ userBalance }: DashboardProps) => {
                 <TabsTrigger value="register">Registreren</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="login" className="animate-fade-in">
+              
+                            <TabsContent value="login" className="animate-fade-in">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div>
                     <Label htmlFor="email">E-mail</Label>
@@ -175,8 +256,23 @@ export const Dashboard = ({ userBalance }: DashboardProps) => {
                   <Button type="submit" className="w-full hover-scale" disabled={loading}>
                     Inloggen
                   </Button>
+
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full text-sm text-muted-foreground hover:text-primary transition-all"
+                    onClick={() => {
+                      toast({
+                        title: "Wachtwoord resetten",
+                        description: "Deze functie is nog niet geïmplementeerd.",
+                      });
+                    }}
+                  >
+                    Wachtwoord vergeten?
+                  </Button>
                 </form>
               </TabsContent>
+
               
               <TabsContent value="register" className="animate-fade-in">
                 <form onSubmit={handleRegister} className="space-y-4">
@@ -313,8 +409,7 @@ export const Dashboard = ({ userBalance }: DashboardProps) => {
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Totaal gespendeerd:</span>
-                <span>€25</span>
+                
               </div>
             </div>
             <div className="mt-6">

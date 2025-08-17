@@ -7,6 +7,8 @@ import { Dashboard } from "@/components/Dashboard";
 import { Applications } from "@/components/Applications";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { LoadingScreen } from "@/components/ui/loading";
+import { BrowserRouter } from "react-router-dom";
+
 
 const AppContent = () => {
   const [activeTab, setActiveTab] = useState('home');
