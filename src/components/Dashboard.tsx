@@ -261,12 +261,7 @@ if (accessToken) {
                     type="button"
                     variant="ghost"
                     className="w-full text-sm text-muted-foreground hover:text-primary transition-all"
-                    onClick={() => {
-                      toast({
-                        title: "Wachtwoord resetten",
-                        description: "Deze functie is nog niet geïmplementeerd.",
-                      });
-                    }}
+                    onClick={() => window.location.href = '/forgot-password'}
                   >
                     Wachtwoord vergeten?
                   </Button>

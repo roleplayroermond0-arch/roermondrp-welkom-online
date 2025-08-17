@@ -9,6 +9,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
   verifyOtp: (email: string, otp: string) => Promise<void>
+  resetPassword: (email: string) => Promise<void>
   updatePassword: (newPassword: string, accessToken?: string) => Promise<void>
 }
 
@@ -157,6 +158,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
   
+  const resetPassword = async (email: string) => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Reset link verzonden",
+        description: "Controleer je e-mail voor de reset link.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Reset mislukt",
+        description: error.message,
+        variant: "destructive",
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const updatePassword = async (newPassword: string, accessToken?: string) => {
     setLoading(true);
     try {
@@ -190,6 +216,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   signIn,
   signOut,
   verifyOtp,
+  resetPassword,
   updatePassword
 }
 

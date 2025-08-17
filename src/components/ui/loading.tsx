@@ -24,8 +24,8 @@ export const Loading = ({ className, size = "md", text }: LoadingProps) => {
 
 export const LoadingScreen = ({ text = "Laden..." }: { text?: string }) => {
   return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-card p-8 rounded-lg shadow-lg border animate-scale-in">
+    <div className="fixed inset-0 bg-gradient-to-br from-background via-background/95 to-primary/5 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-card/90 backdrop-blur-md p-12 rounded-2xl shadow-2xl border border-border/50 animate-scale-in">
         <Loading size="lg" text={text} />
       </div>
     </div>
