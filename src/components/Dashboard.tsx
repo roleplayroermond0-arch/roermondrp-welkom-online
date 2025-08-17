@@ -4,23 +4,26 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Coins, ShoppingBag, Calendar } from "lucide-react";
+import { User, Coins, ShoppingBag, Mail } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { LoadingScreen } from "@/components/ui/loading";
 import { useToast } from "@/hooks/use-toast";
 
 interface DashboardProps {
-  user: any;
   userBalance: number;
-  onLogin: (email: string, password: string) => void;
-  onRegister: (email: string, password: string) => void;
 }
 
-export const Dashboard = ({ user, userBalance, onLogin, onRegister }: DashboardProps) => {
+export const Dashboard = ({ userBalance }: DashboardProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [otp, setOtp] = useState("");
+  const [showOtpVerification, setShowOtpVerification] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState("");
+  const { user, loading, signUp, signIn, signOut, verifyOtp } = useAuth();
   const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!email || !password) {
       toast({
@@ -30,10 +33,14 @@ export const Dashboard = ({ user, userBalance, onLogin, onRegister }: DashboardP
       });
       return;
     }
-    onLogin(email, password);
+    try {
+      await signIn(email, password);
+    } catch (error) {
+      // Error handling is done in the useAuth hook
+    }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!email || !password || !confirmPassword) {
       toast({
@@ -51,14 +58,88 @@ export const Dashboard = ({ user, userBalance, onLogin, onRegister }: DashboardP
       });
       return;
     }
-    onRegister(email, password);
+    try {
+      await signUp(email, password);
+      setPendingEmail(email);
+      setShowOtpVerification(true);
+    } catch (error) {
+      // Error handling is done in the useAuth hook
+    }
   };
+
+  const handleOtpVerification = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!otp || !pendingEmail) {
+      toast({
+        title: "Fout",
+        description: "Vul de verificatiecode in.",
+        variant: "destructive",
+      });
+      return;
+    }
+    try {
+      await verifyOtp(pendingEmail, otp);
+      setShowOtpVerification(false);
+      setPendingEmail("");
+      setOtp("");
+    } catch (error) {
+      // Error handling is done in the useAuth hook
+    }
+  };
+
+  if (loading) {
+    return <LoadingScreen text="Laden..." />;
+  }
+
+  if (showOtpVerification) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center animate-fade-in">
+        <div className="container mx-auto px-4">
+          <Card className="max-w-md mx-auto p-6 animate-scale-in">
+            <div className="text-center mb-6">
+              <Mail className="h-12 w-12 text-primary mx-auto mb-4" />
+              <h1 className="text-2xl font-bold">E-mail Verificatie</h1>
+              <p className="text-muted-foreground mt-2">
+                We hebben een verificatiecode naar {pendingEmail} gestuurd.
+              </p>
+            </div>
+            
+            <form onSubmit={handleOtpVerification} className="space-y-4">
+              <div>
+                <Label htmlFor="otp">Verificatiecode</Label>
+                <Input
+                  id="otp"
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  placeholder="123456"
+                  maxLength={6}
+                  className="text-center text-2xl tracking-widest"
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                Verifiëer Account
+              </Button>
+              <Button 
+                type="button" 
+                variant="ghost" 
+                className="w-full"
+                onClick={() => setShowOtpVerification(false)}
+              >
+                Terug naar inloggen
+              </Button>
+            </form>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center animate-fade-in">
         <div className="container mx-auto px-4">
-          <Card className="max-w-md mx-auto p-6">
+          <Card className="max-w-md mx-auto p-6 animate-scale-in">
             <h1 className="text-2xl font-bold text-center mb-6">RoermondRP Dashboard</h1>
             
             <Tabs defaultValue="login">
@@ -67,7 +148,7 @@ export const Dashboard = ({ user, userBalance, onLogin, onRegister }: DashboardP
                 <TabsTrigger value="register">Registreren</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="login">
+              <TabsContent value="login" className="animate-fade-in">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div>
                     <Label htmlFor="email">E-mail</Label>
@@ -77,6 +158,7 @@ export const Dashboard = ({ user, userBalance, onLogin, onRegister }: DashboardP
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="je@email.com"
+                      className="transition-all duration-200 focus:scale-105"
                     />
                   </div>
                   <div>
@@ -87,15 +169,16 @@ export const Dashboard = ({ user, userBalance, onLogin, onRegister }: DashboardP
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
+                      className="transition-all duration-200 focus:scale-105"
                     />
                   </div>
-                  <Button type="submit" className="w-full">
+                  <Button type="submit" className="w-full hover-scale" disabled={loading}>
                     Inloggen
                   </Button>
                 </form>
               </TabsContent>
               
-              <TabsContent value="register">
+              <TabsContent value="register" className="animate-fade-in">
                 <form onSubmit={handleRegister} className="space-y-4">
                   <div>
                     <Label htmlFor="reg-email">E-mail</Label>
@@ -105,6 +188,7 @@ export const Dashboard = ({ user, userBalance, onLogin, onRegister }: DashboardP
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="je@email.com"
+                      className="transition-all duration-200 focus:scale-105"
                     />
                   </div>
                   <div>
@@ -115,6 +199,7 @@ export const Dashboard = ({ user, userBalance, onLogin, onRegister }: DashboardP
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
+                      className="transition-all duration-200 focus:scale-105"
                     />
                   </div>
                   <div>
@@ -125,9 +210,10 @@ export const Dashboard = ({ user, userBalance, onLogin, onRegister }: DashboardP
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="••••••••"
+                      className="transition-all duration-200 focus:scale-105"
                     />
                   </div>
-                  <Button type="submit" className="w-full">
+                  <Button type="submit" className="w-full hover-scale" disabled={loading}>
                     Registreren
                   </Button>
                 </form>
@@ -146,25 +232,27 @@ export const Dashboard = ({ user, userBalance, onLogin, onRegister }: DashboardP
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background animate-fade-in">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Dashboard</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-4 animate-slide-in-right">Dashboard</h1>
           <p className="text-muted-foreground">Welkom terug, {user.email}!</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <Card className="p-6">
+          <Card className="p-6 hover-scale animate-scale-in">
             <div className="flex items-center space-x-4">
               <User className="h-8 w-8 text-primary" />
               <div>
                 <h3 className="font-semibold">Account Status</h3>
-                <p className="text-sm text-muted-foreground">Actief</p>
+                <p className="text-sm text-muted-foreground">
+                  {user.email_confirmed_at ? 'Geverifieerd' : 'Niet geverifieerd'}
+                </p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card className="p-6 hover-scale animate-scale-in">
             <div className="flex items-center space-x-4">
               <Coins className="h-8 w-8 text-primary" />
               <div>
@@ -174,7 +262,7 @@ export const Dashboard = ({ user, userBalance, onLogin, onRegister }: DashboardP
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card className="p-6 hover-scale animate-scale-in">
             <div className="flex items-center space-x-4">
               <ShoppingBag className="h-8 w-8 text-primary" />
               <div>
@@ -186,11 +274,15 @@ export const Dashboard = ({ user, userBalance, onLogin, onRegister }: DashboardP
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          <Card className="p-6">
+          <Card className="p-6 animate-fade-in">
             <h2 className="text-xl font-bold mb-4">Recente Aankopen</h2>
             <div className="space-y-3">
-              {recentPurchases.map((purchase) => (
-                <div key={purchase.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+              {recentPurchases.map((purchase, index) => (
+                <div 
+                  key={purchase.id} 
+                  className="flex items-center justify-between p-3 bg-muted rounded-lg hover-scale"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
                   <div>
                     <p className="font-medium">{purchase.item}</p>
                     <p className="text-sm text-muted-foreground">{purchase.date}</p>
@@ -203,7 +295,7 @@ export const Dashboard = ({ user, userBalance, onLogin, onRegister }: DashboardP
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card className="p-6 animate-fade-in">
             <h2 className="text-xl font-bold mb-4">Account Informatie</h2>
             <div className="space-y-3">
               <div className="flex justify-between">
@@ -212,16 +304,28 @@ export const Dashboard = ({ user, userBalance, onLogin, onRegister }: DashboardP
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Lid sinds:</span>
-                <span>Januari 2024</span>
+                <span>{new Date(user.created_at).toLocaleDateString('nl-NL')}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Status:</span>
-                <span className="text-green-500">Actief</span>
+                <span className={user.email_confirmed_at ? 'text-green-500' : 'text-yellow-500'}>
+                  {user.email_confirmed_at ? 'Actief' : 'In afwachting'}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Totaal gespendeerd:</span>
                 <span>€25</span>
               </div>
+            </div>
+            <div className="mt-6">
+              <Button 
+                onClick={signOut} 
+                variant="outline" 
+                className="w-full hover-scale"
+                disabled={loading}
+              >
+                Uitloggen
+              </Button>
             </div>
           </Card>
         </div>

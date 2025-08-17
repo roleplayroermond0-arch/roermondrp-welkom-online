@@ -117,9 +117,9 @@ export const Store = ({ user, userBalance }: StoreProps) => {
                 )}
                 <p className="text-xl font-bold text-primary mb-3">€{pkg.price}</p>
                 <Button 
-                  onClick={() => handlePurchaseCoins(pkg)}
+                  onClick={() => window.open('https://roermondrp.tebex.io/', '_blank')}
                   size="sm"
-                  className="w-full"
+                  className="w-full hover-scale"
                 >
                   Koop
                 </Button>
@@ -150,8 +150,8 @@ export const Store = ({ user, userBalance }: StoreProps) => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {storeItems[selectedCategory as keyof typeof storeItems].map((item) => (
-              <Card key={item.id} className="p-6 hover:border-primary transition-colors">
+            {storeItems[selectedCategory as keyof typeof storeItems].map((item, index) => (
+              <Card key={item.id} className="p-6 hover:border-primary transition-colors hover-scale animate-fade-in" style={{ animationDelay: `${index * 150}ms` }}>
                 <div className="aspect-video mb-4 rounded-lg overflow-hidden bg-muted">
                   <img 
                     src={item.image} 

@@ -5,58 +5,22 @@ import { Store } from "@/components/Store";
 import { Rules } from "@/components/Rules";
 import { Dashboard } from "@/components/Dashboard";
 import { Applications } from "@/components/Applications";
-import { useToast } from "@/hooks/use-toast";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { LoadingScreen } from "@/components/ui/loading";
 
-const Index = () => {
+const AppContent = () => {
   const [activeTab, setActiveTab] = useState('home');
-  const [user, setUser] = useState(null);
-  const [userBalance, setUserBalance] = useState(1500);
-  const { toast } = useToast();
+  const [userBalance] = useState(1500);
+  const { user, signOut, loading } = useAuth();
 
-  const handleLogin = async (email: string, password: string) => {
-    // Here you would integrate with Supabase auth
-    try {
-      // Simulated login for now
-      setUser({ email });
-      toast({
-        title: "Succesvol ingelogd",
-        description: `Welkom terug, ${email}!`,
-      });
-    } catch (error) {
-      toast({
-        title: "Inloggen mislukt",
-        description: "Controleer je gegevens en probeer opnieuw.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleRegister = async (email: string, password: string) => {
-    // Here you would integrate with Supabase auth
-    try {
-      // Simulated registration for now
-      setUser({ email });
-      toast({
-        title: "Account aangemaakt",
-        description: `Welkom bij RoermondRP, ${email}!`,
-      });
-    } catch (error) {
-      toast({
-        title: "Registratie mislukt",
-        description: "Er ging iets mis. Probeer opnieuw.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleLogout = () => {
-    setUser(null);
+  const handleLogout = async () => {
+    await signOut();
     setActiveTab('home');
-    toast({
-      title: "Uitgelogd",
-      description: "Je bent succesvol uitgelogd.",
-    });
   };
+
+  if (loading) {
+    return <LoadingScreen text="Laden..." />;
+  }
 
   const renderContent = () => {
     switch (activeTab) {
@@ -67,14 +31,7 @@ const Index = () => {
       case 'rules':
         return <Rules />;
       case 'dashboard':
-        return (
-          <Dashboard 
-            user={user} 
-            userBalance={userBalance}
-            onLogin={handleLogin}
-            onRegister={handleRegister}
-          />
-        );
+        return <Dashboard userBalance={userBalance} />;
       case 'applications':
         return <Applications user={user} />;
       default:
@@ -92,6 +49,14 @@ const Index = () => {
       />
       {renderContent()}
     </div>
+  );
+};
+
+const Index = () => {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 };
 

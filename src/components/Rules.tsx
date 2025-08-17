@@ -104,7 +104,7 @@ export const Rules = () => {
           <div className="grid md:grid-cols-2 gap-4">
             {importantNotes.map((note, index) => (
               <div key={index} className="flex items-center space-x-2">
-                <Badge> variant="destructive" className="text-xs"!</Badge>
+                <Badge variant="destructive" className="text-xs">!</Badge>
                 <span className="text-muted-foreground">{note}</span>
               </div>
             ))}
