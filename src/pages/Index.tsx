@@ -7,6 +7,7 @@ import { Applications } from "@/pages/Applications";
 import { Complaints } from "@/pages/Complaints";
 import { Dashboard } from "@/components/Dashboard";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { useDiscordAuth } from "@/hooks/useDiscordAuth";
 import { Loading as LoadingScreen } from "@/components/ui/loading";
 
 
@@ -14,6 +15,9 @@ const AppContent = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [userBalance] = useState(1500);
   const { user, signOut, loading } = useAuth();
+  
+  // Check Discord membership for authenticated users
+  useDiscordAuth();
 
   const handleLogout = async () => {
     await signOut();

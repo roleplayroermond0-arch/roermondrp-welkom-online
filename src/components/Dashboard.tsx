@@ -268,6 +268,11 @@ export const Dashboard = ({ userBalance }: DashboardProps) => {
                     Wachtwoord vergeten?
                   </Button>
                 </form>
+                
+                <div className="mt-4 space-y-3">
+                  <div className="text-center text-muted-foreground text-sm">of</div>
+                  <DiscordLoginButton />
+                </div>
               </TabsContent>
 
               <TabsContent value="register" className="animate-fade-in">

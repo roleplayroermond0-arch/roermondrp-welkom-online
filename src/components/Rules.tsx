@@ -77,7 +77,7 @@ export const Rules = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
+        <div className="space-y-6 mb-8">
           {ruleCategories.map((category, index) => (
             <Card key={index} className="p-6">
               <div className="flex items-center space-x-3 mb-4">
