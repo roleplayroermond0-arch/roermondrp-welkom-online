@@ -9,6 +9,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { LoadingScreen } from "@/components/ui/loading";
 import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
+import DiscordLoginButton from "@/components/DiscordLoginButton";
 
 
 interface DashboardProps {
@@ -315,6 +317,38 @@ if (accessToken) {
       </div>
     );
   }
+
+  <div className="flex flex-col gap-4">
+  {/* Je andere knoppen hier */}
+
+  <DiscordLoginButton />
+</div>
+
+
+async function checkDiscordMembership() {
+  const { data: { session } } = await supabase.auth.getSession();
+  const discordAccessToken = session?.provider_token; // Hier zit je Discord token
+
+  if (!discordAccessToken) {
+    console.error("Geen Discord token gevonden");
+    return false;
+  }
+
+  const res = await fetch("http://localhost:3001/check-discord", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ access_token: discordAccessToken }),
+  });
+
+  if (!res.ok) {
+    console.error("Join de Discord server voor dat je kunt inloggen");
+    return false;
+  }
+
+  const data = await res.json();
+  return data.success;
+}
+
 
   const recentPurchases = [
     { id: 1, item: "Audi RS6", amount: -2500, date: "2024-01-15" },

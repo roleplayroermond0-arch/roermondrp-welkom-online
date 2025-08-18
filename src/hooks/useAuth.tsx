@@ -1,6 +1,8 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react'
 import { supabase, type User } from '@/lib/supabase'
 import { useToast } from '@/hooks/use-toast'
+import DiscordLoginButton from "@/components/DiscordLoginButton";
+
 
 interface AuthContextType {
   user: User | null
@@ -12,6 +14,15 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<void>
   updatePassword: (newPassword: string, accessToken?: string) => Promise<void>
 }
+
+<div className="space-y-4">
+  {/* bestaand email/password form */}
+  
+  <div className="text-center text-gray-500">of</div>
+
+  <DiscordLoginButton />
+</div>
+
 
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
