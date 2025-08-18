@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Coins, ShoppingBag, Mail } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { CheckCircle, XCircle, User, Mail, Calendar, ExternalLink, ShoppingBag, Lock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { LoadingScreen } from "@/components/ui/loading";
+import { Loading as LoadingScreen } from "@/components/ui/loading";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import DiscordLoginButton from "@/components/DiscordLoginButton";
-
 
 interface DashboardProps {
   userBalance: number;
@@ -28,7 +29,6 @@ export const Dashboard = ({ userBalance }: DashboardProps) => {
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const accessToken = searchParams.get("access_token");
-  
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -97,81 +97,82 @@ export const Dashboard = ({ userBalance }: DashboardProps) => {
   if (loading) {
     return <LoadingScreen text="Laden..." />;
   }
-if (accessToken) {
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center animate-fade-in">
-      <Card className="max-w-md mx-auto p-6 animate-scale-in">
-        <div className="text-center mb-6">
-          <Lock className="h-12 w-12 text-primary mx-auto mb-4" />
-          <h1 className="text-2xl font-bold">Reset je wachtwoord</h1>
-          <p className="text-muted-foreground mt-2">
-            Kies een nieuw wachtwoord voor je account.
-          </p>
-        </div>
 
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            if (!password || !confirmPassword) {
-              toast({
-                title: "Fout",
-                description: "Vul beide velden in.",
-                variant: "destructive",
-              });
-              return;
-            }
-            if (password !== confirmPassword) {
-              toast({
-                title: "Fout",
-                description: "Wachtwoorden komen niet overeen.",
-                variant: "destructive",
-              });
-              return;
-            }
-            try {
-              await updatePassword(password, accessToken);
-              toast({
-                title: "Succes",
-                description: "Je wachtwoord is aangepast.",
-              });
-            } catch {
-              toast({
-                title: "Fout",
-                description: "Reset mislukt.",
-                variant: "destructive",
-              });
-            }
-          }}
-          className="space-y-4"
-        >
-          <div>
-            <Label htmlFor="password">Nieuw wachtwoord</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-            />
+  if (accessToken) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center animate-fade-in">
+        <Card className="max-w-md mx-auto p-6 animate-scale-in">
+          <div className="text-center mb-6">
+            <Lock className="h-12 w-12 text-primary mx-auto mb-4" />
+            <h1 className="text-2xl font-bold">Reset je wachtwoord</h1>
+            <p className="text-muted-foreground mt-2">
+              Kies een nieuw wachtwoord voor je account.
+            </p>
           </div>
-          <div>
-            <Label htmlFor="confirmPassword">Bevestig wachtwoord</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="••••••••"
-            />
-          </div>
-          <Button type="submit" className="w-full">
-            Wachtwoord resetten
-          </Button>
-        </form>
-      </Card>
-    </div>
-  );
-}
+
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (!password || !confirmPassword) {
+                toast({
+                  title: "Fout",
+                  description: "Vul beide velden in.",
+                  variant: "destructive",
+                });
+                return;
+              }
+              if (password !== confirmPassword) {
+                toast({
+                  title: "Fout",
+                  description: "Wachtwoorden komen niet overeen.",
+                  variant: "destructive",
+                });
+                return;
+              }
+              try {
+                await updatePassword(password, accessToken);
+                toast({
+                  title: "Succes",
+                  description: "Je wachtwoord is aangepast.",
+                });
+              } catch {
+                toast({
+                  title: "Fout",
+                  description: "Reset mislukt.",
+                  variant: "destructive",
+                });
+              }
+            }}
+            className="space-y-4"
+          >
+            <div>
+              <Label htmlFor="password">Nieuw wachtwoord</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+              />
+            </div>
+            <div>
+              <Label htmlFor="confirmPassword">Bevestig wachtwoord</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+              />
+            </div>
+            <Button type="submit" className="w-full">
+              Wachtwoord resetten
+            </Button>
+          </form>
+        </Card>
+      </div>
+    );
+  }
 
   if (showOtpVerification) {
     return (
@@ -230,8 +231,7 @@ if (accessToken) {
                 <TabsTrigger value="register">Registreren</TabsTrigger>
               </TabsList>
               
-              
-                            <TabsContent value="login" className="animate-fade-in">
+              <TabsContent value="login" className="animate-fade-in">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div>
                     <Label htmlFor="email">E-mail</Label>
@@ -270,7 +270,6 @@ if (accessToken) {
                 </form>
               </TabsContent>
 
-              
               <TabsContent value="register" className="animate-fade-in">
                 <form onSubmit={handleRegister} className="space-y-4">
                   <div>
@@ -318,140 +317,78 @@ if (accessToken) {
     );
   }
 
-  <div className="flex flex-col gap-4">
-  {/* Je andere knoppen hier */}
-
-  <DiscordLoginButton />
-</div>
-
-
-async function checkDiscordMembership() {
-  const { data: { session } } = await supabase.auth.getSession();
-  const discordAccessToken = session?.provider_token; // Hier zit je Discord token
-
-  if (!discordAccessToken) {
-    console.error("Geen Discord token gevonden");
-    return false;
-  }
-
-  const res = await fetch("http://localhost:3001/check-discord", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ access_token: discordAccessToken }),
-  });
-
-  if (!res.ok) {
-    console.error("Join de Discord server voor dat je kunt inloggen");
-    return false;
-  }
-
-  const data = await res.json();
-  return data.success;
-}
-
-
-  const recentPurchases = [
-    { id: 1, item: "Audi RS6", amount: -2500, date: "2024-01-15" },
-    { id: 2, item: "Munten gekocht", amount: +1000, date: "2024-01-14" },
-    { id: 3, item: "Step", amount: -150, date: "2024-01-13" },
-  ];
-
+  // Logged in user dashboard - Clean and minimal
   return (
-    <div className="min-h-screen bg-background animate-fade-in">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4 animate-slide-in-right">Dashboard</h1>
-          <p className="text-muted-foreground">Welkom terug, {user.email}!</p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <Card className="p-6 hover-scale animate-scale-in">
-            <div className="flex items-center space-x-4">
-              <User className="h-8 w-8 text-primary" />
-              <div>
-                <h3 className="font-semibold">Account Status</h3>
-                <p className="text-sm text-muted-foreground">
-                  {user.email_confirmed_at ? 'Geverifieerd' : 'Niet geverifieerd'}
-                </p>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-6 hover-scale animate-scale-in">
-            <div className="flex items-center space-x-4">
-              <Coins className="h-8 w-8 text-primary" />
-              <div>
-                <h3 className="font-semibold">Huidige Munten</h3>
-                <p className="text-2xl font-bold text-primary">{userBalance}</p>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-6 hover-scale animate-scale-in">
-            <div className="flex items-center space-x-4">
-              <ShoppingBag className="h-8 w-8 text-primary" />
-              <div>
-                <h3 className="font-semibold">Totaal Gekocht</h3>
-                <p className="text-sm text-muted-foreground">3 items</p>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card className="p-6 animate-fade-in">
-            <h2 className="text-xl font-bold mb-4">Recente Aankopen</h2>
-            <div className="space-y-3">
-              {recentPurchases.map((purchase, index) => (
-                <div 
-                  key={purchase.id} 
-                  className="flex items-center justify-between p-3 bg-muted rounded-lg hover-scale"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div>
-                    <p className="font-medium">{purchase.item}</p>
-                    <p className="text-sm text-muted-foreground">{purchase.date}</p>
-                  </div>
-                  <div className={`font-bold ${purchase.amount > 0 ? 'text-green-500' : 'text-red-500'}`}>
-                    {purchase.amount > 0 ? '+' : ''}{purchase.amount} munten
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <Card className="p-6 animate-fade-in">
-            <h2 className="text-xl font-bold mb-4">Account Informatie</h2>
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">E-mail:</span>
-                <span>{user.email}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Lid sinds:</span>
-                <span>{new Date(user.created_at).toLocaleDateString('nl-NL')}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Status:</span>
-                <span className={user.email_confirmed_at ? 'text-green-500' : 'text-yellow-500'}>
-                  {user.email_confirmed_at ? 'Actief' : 'In afwachting'}
+    <div className="min-h-screen bg-background p-4">
+      <div className="container mx-auto max-w-2xl">
+        <h1 className="text-3xl font-bold mb-6 text-center">Dashboard</h1>
+        
+        <div className="space-y-6">
+          {/* Account Status Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <User className="h-5 w-5" />
+                  Account Status
                 </span>
+                {user.email_confirmed_at ? (
+                  <Badge variant="default" className="bg-green-500 hover:bg-green-600">
+                    <CheckCircle className="mr-1 h-3 w-3" />
+                    Geverifieerd
+                  </Badge>
+                ) : (
+                  <Badge variant="destructive">
+                    <XCircle className="mr-1 h-3 w-3" />
+                    Niet Geverifieerd
+                  </Badge>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">E-mail:</span>
+                  <span className="text-sm text-muted-foreground">{user.email}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Lid sinds:</span>
+                  <span className="text-sm text-muted-foreground">
+                    {new Date(user.created_at).toLocaleDateString('nl-NL')}
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-between">
-                
-              </div>
-            </div>
-            <div className="mt-6">
-              <Button 
-                onClick={signOut} 
-                variant="outline" 
-                className="w-full hover-scale"
-                disabled={loading}
-              >
-                Uitloggen
-              </Button>
-            </div>
+            </CardContent>
           </Card>
+
+          {/* Quick Actions Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Snelle Acties</CardTitle>
+              <CardDescription>
+                Direct toegang tot belangrijke functies
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => window.open('https://tebex.io/roermondRP', '_blank')}
+              >
+                <ShoppingBag className="mr-2 h-4 w-4" />
+                Open Tebex Shop
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <div className="mt-8 text-center">
+          <Button 
+            onClick={signOut}
+            variant="destructive"
+          >
+            Uitloggen
+          </Button>
         </div>
       </div>
     </div>

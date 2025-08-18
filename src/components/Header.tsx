@@ -12,6 +12,7 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout }: HeaderProps)
   const navItems = [
     { id: 'home', label: 'Home' },
     { id: 'store', label: 'Store' },
+    { id: 'complaints', label: 'Klachten' },
     { id: 'rules', label: 'Regels' },
     { id: 'applications', label: 'Sollicitaties' },
     { id: 'dashboard', label: 'Dashboard' },

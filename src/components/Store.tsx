@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Coins, Car, Package } from "lucide-react";
+import { Coins, Car, Package, Store as StoreIcon, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import audiRs6 from "@/assets/audi-rs6.jpg";
 import bmwM5 from "@/assets/bmw-m5.jpg";
@@ -88,16 +88,36 @@ export const Store = ({ user, userBalance }: StoreProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">RoermondRP Store</h1>
-          {user && (
-            <div className="flex items-center gap-2 text-lg">
-              <Coins className="h-5 w-5 text-primary" />
-              <span className="font-semibold">{userBalance} munten</span>
-            </div>
-          )}
+    <div className="min-h-screen bg-background p-4">
+      <div className="container mx-auto max-w-4xl">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-4 flex items-center justify-center gap-2">
+            <StoreIcon className="h-8 w-8" />
+            RoermondRP Store
+          </h1>
+          <p className="text-muted-foreground mb-6">
+            Ontdek alle beschikbare pakketten en items voor RoermondRP
+          </p>
+          
+          {/* Tebex Store Button */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>Officiële Tebex Store</CardTitle>
+              <CardDescription>
+                Bezoek onze officiële store voor alle beschikbare pakketten, voertuigen en items
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                size="lg"
+                className="w-full"
+                onClick={() => window.open('https://tebex.io/roermondRP', '_blank')}
+              >
+                <ExternalLink className="mr-2 h-5 w-5" />
+                Open Tebex Store
+              </Button>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Coin Packages - Compact Design */}

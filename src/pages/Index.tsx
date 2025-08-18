@@ -3,11 +3,11 @@ import { Header } from "@/components/Header";
 import { HomePage } from "@/components/HomePage";
 import { Store } from "@/components/Store";
 import { Rules } from "@/components/Rules";
+import { Applications } from "@/pages/Applications";
+import { Complaints } from "@/pages/Complaints";
 import { Dashboard } from "@/components/Dashboard";
-import { Applications } from "@/components/Applications";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
-import { LoadingScreen } from "@/components/ui/loading";
-import { BrowserRouter } from "react-router-dom";
+import { Loading as LoadingScreen } from "@/components/ui/loading";
 
 
 const AppContent = () => {
@@ -30,12 +30,14 @@ const AppContent = () => {
         return <HomePage setActiveTab={setActiveTab} />;
       case 'store':
         return <Store user={user} userBalance={userBalance} />;
+      case 'complaints':
+        return <Complaints />;
       case 'rules':
         return <Rules />;
+      case 'applications':
+        return <Applications />;
       case 'dashboard':
         return <Dashboard userBalance={userBalance} />;
-      case 'applications':
-        return <Applications user={user} />;
       default:
         return <HomePage setActiveTab={setActiveTab} />;
     }
