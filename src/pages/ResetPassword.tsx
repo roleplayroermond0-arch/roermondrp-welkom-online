@@ -1,23 +1,61 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
 
 export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [success, setSuccess] = useState(false);
-  const { updatePassword } = useAuth();
+  const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const token = searchParams.get("token");
+    const type = searchParams.get("type");
+
+    console.log("🔑 URL token:", token);
+    console.log("📌 URL type:", type);
+
+    if (token && type === "recovery") {
+      (async () => {
+        const { data, error } = await supabase.auth.exchangeCodeForSession(token);
+        if (error) {
+          console.error("❌ Session exchange error:", error.message);
+          setErrorMsg("Kon sessie niet herstellen. Probeer de link opnieuw te openen.");
+        } else {
+          console.log("✅ Sessie ingesteld:", data);
+        }
+        setLoading(false);
+      })();
+    } else {
+      console.warn("⚠️ Geen geldig token/type in URL gevonden.");
+      setLoading(false);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg("");
+
     try {
-      await updatePassword(newPassword);
+      console.log("🔐 Probeer wachtwoord update...");
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+
       setSuccess(true);
     } catch (err: any) {
+      console.error("❌ updateUser error:", err.message);
       setErrorMsg(err.message || "Er ging iets mis.");
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-muted-foreground">Bezig met laden...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background/95 to-primary/5 p-4">
@@ -29,7 +67,7 @@ export default function ResetPassword() {
               Voer je nieuwe wachtwoord in om je account te beveiligen.
             </p>
           </div>
-          
+
           {success ? (
             <div className="text-center space-y-4">
               <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
