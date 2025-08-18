@@ -15,7 +15,7 @@ export const Complaints = () => {
   const { toast } = useToast();
   const { user } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!user) {
@@ -41,50 +41,57 @@ export const Complaints = () => {
     try {
       // Format the Discord message
       const discordMessage = {
-        embeds: [{
-          title: "🚨 Nieuwe Klacht Ingediend",
-          color: 15158332, // Red color
-          fields: [
-            {
-              name: "👤 Gebruiker",
-              value: user.email,
-              inline: true
+        embeds: [
+          {
+            title: "🚨 Nieuwe Klacht Ingediend",
+            color: 15158332, // Rood
+            fields: [
+              {
+                name: "👤 Gebruiker",
+                value: user.email,
+                inline: true,
+              },
+              {
+                name: "📝 Klacht",
+                value: complaint,
+                inline: false,
+              },
+              {
+                name: "🔗 Bewijs",
+                value: evidenceLink || "Geen bewijs verstrekt",
+                inline: false,
+              },
+            ],
+            timestamp: new Date().toISOString(),
+            footer: {
+              text: "RoermondRP Klachten Systeem",
             },
-            {
-              name: "📝 Klacht",
-              value: complaint,
-              inline: false
-            },
-            {
-              name: "🔗 Bewijs",
-              value: evidenceLink || "Geen bewijs verstrekt",
-              inline: false
-            }
-          ],
-          timestamp: new Date().toISOString(),
-          footer: {
-            text: "RoermondRP Klachten Systeem"
-          }
-        }]
+          },
+        ],
       };
 
-      // This would be sent to your Discord webhook
-      // For now, we'll simulate the webhook call
-      console.log('Discord webhook payload:', discordMessage);
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // 🚨 Verstuur de klacht naar Discord via webhook
+      const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL; // in je .env plaatsen
+      const response = await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(discordMessage),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Discord webhook error: ${response.statusText}`);
+      }
 
       toast({
         title: "Klacht ingediend",
-        description: "Je klacht is succesvol ingediend en wordt binnenkort behandeld.",
+        description: "Je klacht is succesvol ingediend en doorgestuurd naar het team.",
       });
 
       // Reset form
-      setComplaint('');
-      setEvidenceLink('');
+      setComplaint("");
+      setEvidenceLink("");
     } catch (error) {
-      console.error('Error submitting complaint:', error);
+      console.error("Error submitting complaint:", error);
       toast({
         title: "Fout bij indienen",
         description: "Er is een fout opgetreden bij het indienen van je klacht.",
@@ -94,6 +101,7 @@ export const Complaints = () => {
       setIsSubmitting(false);
     }
   };
+
 
   if (!user) {
     return (

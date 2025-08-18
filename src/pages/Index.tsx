@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 import { HomePage } from "@/components/HomePage";
 import { Store } from "@/components/Store";
 import { Rules } from "@/components/Rules";
-import { Applications } from "@/pages/Applications";
+import { Applications } from "@/components/Applications";
 import { Complaints } from "@/pages/Complaints";
 import { Dashboard } from "@/components/Dashboard";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
@@ -39,7 +39,7 @@ const AppContent = () => {
       case 'rules':
         return <Rules />;
       case 'applications':
-        return <Applications />;
+        return <Applications user={user} />;
       case 'dashboard':
         return <Dashboard userBalance={userBalance} />;
       default:

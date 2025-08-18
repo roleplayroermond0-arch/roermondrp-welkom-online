@@ -8,12 +8,21 @@ interface HomePageProps {
 
 export const HomePage = ({ setActiveTab }: HomePageProps) => {
   const handleJoinGame = () => {
-    window.open('https://cfx.re/join/xk8d3m', '_blank');
+    window.open('https://cfx.re/join/arj7ez', '_blank');
   };
 
   const handleDiscord = () => {
     window.open('https://discord.gg/YyfjqXSy6k', '_blank');
   };
+
+  <Button 
+  onClick={() => window.open('https://roermond-roleplay.tebex.io/', '_blank')}
+  className="w-full"
+  size="lg"
+>
+  Naar Store
+</Button>
+
 
   const features = [
     {
@@ -77,28 +86,35 @@ export const HomePage = ({ setActiveTab }: HomePageProps) => {
           </div>
 
           <div className="bg-card p-10 rounded-xl border border-border hover:border-primary transition-colors group">
-            <div className="text-center">
-              <ShoppingCart className="h-16 w-16 text-primary mx-auto mb-6 group-hover:scale-110 transition-transform" />
-              <h3 className="text-2xl font-semibold mb-6">Store</h3>
-              <p className="text-muted-foreground mb-8 text-lg">
-                Koop munten en upgrade je roleplay ervaring met premium items.
-              </p>
-              <Button 
-                onClick={() => setActiveTab('store')}
-                className="w-full"
-                size="lg"
-              >
-                Naar Store
-              </Button>
-            </div>
-          </div>
+  <div className="text-center">
+    <ShoppingCart className="h-16 w-16 text-primary mx-auto mb-6 group-hover:scale-110 transition-transform" />
+    <h3 className="text-2xl font-semibold mb-6">Store</h3>
+    <p className="text-muted-foreground mb-8 text-lg">
+      Koop munten en upgrade je roleplay ervaring met premium items.
+    </p>
+    <a 
+      href="https://roermond-roleplay.tebex.io/" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="w-full block"
+    >
+      <Button 
+        className="w-full"
+        size="lg"
+      >
+        Naar Store
+      </Button>
+    </a>
+  </div>
+</div>
+
 
           <div className="bg-card p-10 rounded-xl border border-border hover:border-primary transition-colors group">
             <div className="text-center">
               <MessageCircle className="h-16 w-16 text-primary mx-auto mb-6 group-hover:scale-110 transition-transform" />
               <h3 className="text-2xl font-semibold mb-6">Discord</h3>
               <p className="text-muted-foreground mb-8 text-lg">
-                Join onze Discord community voor support en updates.
+                Join onze Discord community voor support en de nieuwste updates.
               </p>
               <Button 
                 onClick={handleDiscord}

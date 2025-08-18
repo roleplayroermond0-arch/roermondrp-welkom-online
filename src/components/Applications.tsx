@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,8 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Siren, Heart, Wrench, Phone, Car } from "lucide-react";
+import { Siren, Heart, Wrench, Car } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import React from "react";
 
 interface ApplicationsProps {
   user: any;
@@ -24,6 +25,14 @@ export const Applications = ({ user }: ApplicationsProps) => {
     discord: ""
   });
   const { toast } = useToast();
+
+  const colorClasses: Record<string, string> = {
+    blue: "text-blue-500",
+    red: "text-red-500",
+    green: "text-green-500",
+    yellow: "text-yellow-400",
+    orange: "text-orange-500",
+  };
 
   const jobs = [
     {
@@ -72,7 +81,7 @@ export const Applications = ({ user }: ApplicationsProps) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!user) {
