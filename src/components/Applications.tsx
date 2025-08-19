@@ -1,385 +1,390 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Siren, Heart, Wrench, Car } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { AlertCircle, Loader2 } from "lucide-react";
+import supabase from "@/lib/supabase";
 
-// Webhooks + kleuren (pas de URLs aan naar jouw echte Discord webhooks)
-const JOB_WEBHOOKS: Record<
-  string,
-  { url: string; color: number; textColor: string }
-> = {
-  politie: {
-    url: "https://discord.com/api/webhooks/1407128666512687114/SDr0d-AEUDgaJkjCEOTNyLAfXmqJMn7jMhibZWwPz5nLQeXPu9SX-Ujj6f81ST_wWdrQ",
-    color: 0x00bfff, // lichtblauw embed
-    textColor: "text-sky-500", // Tailwind class
-  },
-  ambulance: {
-    url: "https://discord.com/api/webhooks/1407133137900933210/1kg8qT7_ocSPPBgXuw01TDfdl433uJzcIWJniidR1bVkeJ8DCvKNScqZMbLWE9ygCzVg",
-    color: 0xffd700, // geel embed
-    textColor: "text-yellow-500",
-  },
-  kmar: {
-    url: "https://discord.com/api/webhooks/1407133248949059764/zoTEsp8PtumWA_HwAY-wtS_JaPKzl7Zpn0NDpAl1cYtsZPlLfbGXhPdKGK0l5mE_JAQ9",
-    color: 0x00008b, // donkerblauw embed
-    textColor: "text-blue-900",
-  },
-  anwb: {
-    url: "https://discord.com/api/webhooks/1407133360572207155/N7tFTeYOH4QeqAbK2-TcGCQdtCaG-iynMy-4IE805FiqI5kffMjRWM6WLoKHC6F1AxCA",
-    color: 0xffffff, // wit embed
-    textColor: "text-gray-200",
-  },
-  taxi: {
-    url: "https://discord.com/api/webhooks/1407133444323938486/AeOIlDUT6HW5D8gKE_KZxCAcuiDVZIC4HT9owDuN2_pj_cGLqikeMqN08MvjLLFHMG_8",
-    color: 0x000000, // zwart embed
-    textColor: "text-black",
-  },
-};
+interface Job {
+  id: string;
+  name: string;
+  description: string;
+  is_accepting_applications: boolean;
+  icon: string;
+}
+
+interface Question {
+  id: string;
+  job_id: string;
+  question_text: string;
+  question_type: string;
+  options?: string[];
+  is_required: boolean;
+  order_index: number;
+}
 
 interface ApplicationsProps {
   user: any;
 }
 
-export const Applications = ({ user }: ApplicationsProps) => {
-  const [selectedJob, setSelectedJob] = useState("");
-  const [formData, setFormData] = useState({
-    name: "",
-    age: "",
-    motivation: "",
-    availability: "",
-    experience: "",
-    discord: "",
-  });
+export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
+  const [selectedJob, setSelectedJob] = useState<string | null>(null);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [formData, setFormData] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
-  const jobs = [
-    {
-      id: "politie",
-      name: "Politie",
-      icon: Siren,
-      description: "Zorg voor orde en veiligheid in Roermond",
-      requirements: ["Minimaal 18 jaar", "Goede communicatie", "Betrouwbaar"],
-    },
-    {
-      id: "ambulance",
-      name: "Ambulance",
-      icon: Heart,
-      description: "Red levens en zorg voor de gezondheid van burgers",
-      requirements: [
-        "Minimaal 16 jaar",
-        "Medische kennis gewenst",
-        "Stress bestendig",
-      ],
-    },
-    {
-      id: "kmar",
-      name: "Kmar",
-      icon: Siren,
-      description: "Koninklijke Marechaussee - Speciale taken",
-      requirements: ["Minimaal 21 jaar", "Politie ervaring", "Disciplinair"],
-    },
-    {
-      id: "anwb",
-      name: "ANWB",
-      icon: Wrench,
-      description: "Technische ondersteuning en wegenwacht",
-      requirements: [
-        "Minimaal 16 jaar",
-        "Technische kennis",
-        "Servicegerichtheid",
-      ],
-    },
-    {
-      id: "taxi",
-      name: "Taxi",
-      icon: Car,
-      description: "Vervoer burgers veilig door de stad",
-      requirements: ["Minimaal 16 jaar", "Rijbewijs", "Klantvriendelijk"],
-    },
-  ];
+  useEffect(() => {
+    loadJobs();
+  }, []);
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  useEffect(() => {
+    if (selectedJob) {
+      loadQuestions(selectedJob);
+    }
+  }, [selectedJob]);
+
+  const loadJobs = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('jobs')
+        .select('*')
+        .order('created_at');
+
+      if (error) throw error;
+      setJobs(data || []);
+    } catch (error) {
+      console.error('Error loading jobs:', error);
+      toast({
+        title: "Error loading jobs",
+        description: "Failed to load available jobs",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const loadQuestions = async (jobId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('application_questions')
+        .select('*')
+        .eq('job_id', jobId)
+        .order('order_index');
 
+      if (error) throw error;
+      setQuestions(data || []);
+      setFormData({});
+    } catch (error) {
+      console.error('Error loading questions:', error);
+      toast({
+        title: "Error loading form",
+        description: "Failed to load application form",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleInputChange = (questionId: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [questionId]: value
+    }));
+  };
+
+  const validateForm = () => {
+    const requiredQuestions = questions.filter(q => q.is_required);
+    const missingFields = requiredQuestions.filter(q => !formData[q.id]?.trim());
+    
+    if (missingFields.length > 0) {
+      toast({
+        title: "Missing required fields",
+        description: "Please fill in all required fields before submitting",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    return true;
+  };
+
+  const submitApplication = async () => {
     if (!user) {
       toast({
-        title: "Inloggen vereist",
-        description: "Je moet ingelogd zijn om te solliciteren.",
-        variant: "destructive",
+        title: "Authentication required",
+        description: "Please log in to submit an application",
+        variant: "destructive"
       });
       return;
     }
 
-    if (!selectedJob || !formData.name || !formData.age || !formData.motivation) {
-      toast({
-        title: "Incomplete gegevens",
-        description: "Vul alle verplichte velden in.",
-        variant: "destructive",
-      });
-      return;
-    }
+    if (!validateForm()) return;
 
-    const jobData = jobs.find((job) => job.id === selectedJob);
-    const webhook = JOB_WEBHOOKS[selectedJob];
-    if (!webhook || !jobData) {
-      toast({
-        title: "Fout",
-        description: "Geen webhook of job gevonden.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const payload = {
-      embeds: [
-        {
-          title: `Nieuwe sollicitatie - ${jobData.name}`,
-          color: webhook.color,
-          fields: [
-            { name: "Naam", value: formData.name, inline: true },
-            { name: "Leeftijd", value: formData.age, inline: true },
-            {
-              name: "Discord",
-              value: formData.discord || "Niet ingevuld",
-              inline: false,
-            },
-            {
-              name: "Beschikbaarheid",
-              value: formData.availability || "Niet ingevuld",
-              inline: false,
-            },
-            {
-              name: "Ervaring",
-              value: formData.experience || "Niet ingevuld",
-              inline: false,
-            },
-            {
-              name: "Motivatie",
-              value: formData.motivation || "Niet ingevuld",
-              inline: false,
-            },
-            {
-              name: "Ingediend door",
-              value: user?.username || "Onbekend",
-              inline: false,
-            },
-          ],
-          timestamp: new Date().toISOString(),
-        },
-      ],
-    };
-
+    setSubmitting(true);
+    
     try {
-      await fetch(webhook.url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+      const selectedJobData = jobs.find(job => job.id === selectedJob);
+      
+      const embed = {
+        title: "🚀 Nieuwe Sollicitatie",
+        description: `**Functie:** ${selectedJobData?.icon} ${selectedJobData?.name}`,
+        color: 0x00ff7f,
+        fields: [
+          {
+            name: "👤 Sollicitant",
+            value: user.username || "Onbekend",
+            inline: true
+          },
+          {
+            name: "📧 Email",
+            value: user.email || "Niet beschikbaar",
+            inline: true
+          }
+        ],
+        timestamp: new Date().toISOString(),
+        footer: {
+          text: "RoermondRP Sollicitaties"
+        }
+      };
+
+      questions.forEach((question, index) => {
+        const answer = formData[question.id] || "Niet ingevuld";
+        embed.fields.push({
+          name: `${index + 1}. ${question.question_text}`,
+          value: answer.substring(0, 1024),
+          inline: false
+        });
       });
 
+      const webhookPayload = {
+        embeds: [embed],
+        username: "Sollicitatie Bot",
+        avatar_url: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+      };
+
+      const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_STAFF;
+      
+      if (webhookUrl) {
+        const response = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookPayload)
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to send to Discord');
+        }
+      }
+
       toast({
-        title: "Sollicitatie verstuurd!",
-        description: `Je sollicitatie voor ${jobData.name} is succesvol ingediend.`,
+        title: "Sollicitatie verzonden!",
+        description: "Je sollicitatie is succesvol verzonden en wordt binnenkort beoordeeld.",
       });
 
-      setFormData({
-        name: "",
-        age: "",
-        motivation: "",
-        availability: "",
-        experience: "",
-        discord: "",
-      });
-      setSelectedJob("");
-    } catch (err) {
+      setFormData({});
+      setSelectedJob(null);
+      
+    } catch (error) {
+      console.error('Error submitting application:', error);
       toast({
-        title: "Fout",
-        description: "Er ging iets mis bij het versturen naar Discord.",
-        variant: "destructive",
+        title: "Fout bij verzenden",
+        description: "Er ging iets mis bij het verzenden van je sollicitatie. Probeer het opnieuw.",
+        variant: "destructive"
       });
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const selectedJobData = jobs.find((job) => job.id === selectedJob);
+  const renderFormField = (question: Question) => {
+    const value = formData[question.id] || '';
+    
+    switch (question.question_type) {
+      case 'textarea':
+        return (
+          <Textarea
+            value={value}
+            onChange={(e) => handleInputChange(question.id, e.target.value)}
+            placeholder="Voer je antwoord in..."
+            className="min-h-[100px]"
+          />
+        );
+      
+      case 'select':
+        return (
+          <select
+            value={value}
+            onChange={(e) => handleInputChange(question.id, e.target.value)}
+            className="w-full px-3 py-2 border border-border rounded-md bg-background"
+          >
+            <option value="">Selecteer een optie...</option>
+            {question.options?.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        );
+      
+      default:
+        return (
+          <Input
+            type="text"
+            value={value}
+            onChange={(e) => handleInputChange(question.id, e.target.value)}
+            placeholder="Voer je antwoord in..."
+          />
+        );
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex items-center gap-3">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Beschikbare functies laden...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
-            Sollicitaties
-          </h1>
+    <div className="min-h-screen bg-background py-12">
+      <div className="container mx-auto px-4 max-w-4xl">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4">Sollicitaties</h1>
           <p className="text-xl text-muted-foreground">
-            Solliciteer voor een officiële functie binnen RoermondRP
+            Solliciteer voor een functie bij RoermondRP
           </p>
         </div>
 
-        {!user && (
-          <Card className="p-6 mb-8 border-destructive bg-destructive/10">
-            <p className="text-center text-destructive font-semibold">
-              Je moet ingelogd zijn om te kunnen solliciteren. Ga naar Dashboard
-              om in te loggen.
-            </p>
-          </Card>
-        )}
-
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {jobs.map((job) => {
-            const webhook = JOB_WEBHOOKS[job.id];
-            return (
+        {!selectedJob ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {jobs.map((job) => (
               <Card
                 key={job.id}
-                className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
-                  selectedJob === job.id ? "ring-2 ring-primary border-primary" : ""
+                className={`p-6 cursor-pointer transition-all duration-200 hover:scale-105 border-2 ${
+                  job.is_accepting_applications
+                    ? 'hover:border-primary border-border'
+                    : 'border-muted bg-muted/20 cursor-not-allowed'
                 }`}
-                onClick={() => setSelectedJob(job.id)}
+                onClick={() => {
+                  if (job.is_accepting_applications) {
+                    setSelectedJob(job.id);
+                  }
+                }}
               >
                 <div className="text-center">
-                  <job.icon
-                    className={`h-12 w-12 mx-auto mb-4 ${
-                      webhook?.textColor || "text-primary"
-                    }`}
-                  />
-                  <h3 className="text-xl font-bold mb-2">{job.name}</h3>
-                  <p className="text-muted-foreground mb-4 text-sm">
-                    {job.description}
-                  </p>
-                  <div className="space-y-1">
-                    {job.requirements.map((req, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
-                        {req}
+                  <div className="text-6xl mb-4">{job.icon}</div>
+                  <h3 className="text-xl font-semibold mb-2">{job.name}</h3>
+                  <p className="text-muted-foreground mb-4">{job.description}</p>
+                  
+                  {job.is_accepting_applications ? (
+                    <Badge className="bg-green-500 hover:bg-green-600">
+                      Sollicitaties Open
+                    </Badge>
+                  ) : (
+                    <div className="space-y-2">
+                      <Badge variant="secondary" className="bg-red-100 text-red-700">
+                        Gesloten
                       </Badge>
-                    ))}
-                  </div>
+                      <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                        <AlertCircle className="h-4 w-4" />
+                        <span>Sollicitaties voor deze functie zijn momenteel uitgeschakeld</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </Card>
-            );
-          })}
-        </div>
-
-        {selectedJobData && (
-          <Card className="p-6">
-            <h2 className="text-2xl font-bold mb-6">
-              Sollicitatie voor {selectedJobData.name}
-            </h2>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <Label htmlFor="name">Volledige Naam *</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
-                    placeholder="Jan Jansen"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="age">Leeftijd *</Label>
-                  <Input
-                    id="age"
-                    type="number"
-                    value={formData.age}
-                    onChange={(e) => handleInputChange("age", e.target.value)}
-                    placeholder="18"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="discord">Discord Username</Label>
-                <Input
-                  id="discord"
-                  value={formData.discord}
-                  onChange={(e) => handleInputChange("discord", e.target.value)}
-                  placeholder="gebruiker#1234"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="motivation">Motivatie *</Label>
-                <Textarea
-                  id="motivation"
-                  value={formData.motivation}
-                  onChange={(e) => handleInputChange("motivation", e.target.value)}
-                  placeholder="Waarom wil je deze functie? Wat kun je bijdragen?"
-                  rows={4}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="experience">Eerdere Ervaring</Label>
-                <Textarea
-                  id="experience"
-                  value={formData.experience}
-                  onChange={(e) =>
-                    handleInputChange("experience", e.target.value)
-                  }
-                  placeholder="Heb je ervaring met vergelijkbare functies in andere servers?"
-                  rows={3}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="availability">Beschikbaarheid</Label>
-                <Select
-                  onValueChange={(value) => handleInputChange("availability", value)}
+            ))}
+          </div>
+        ) : (
+          <div className="max-w-2xl mx-auto">
+            <Card className="p-8">
+              <div className="mb-6">
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedJob(null)}
+                  className="mb-4"
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Wanneer ben je beschikbaar?" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="dagdienst">
-                      Dagdienst (08:00 - 16:00)
-                    </SelectItem>
-                    <SelectItem value="avonddienst">
-                      Avonddienst (16:00 - 00:00)
-                    </SelectItem>
-                    <SelectItem value="nachtdienst">
-                      Nachtdienst (00:00 - 08:00)
-                    </SelectItem>
-                    <SelectItem value="weekend">Weekend</SelectItem>
-                    <SelectItem value="flexibel">Flexibel</SelectItem>
-                  </SelectContent>
-                </Select>
+                  ← Terug naar overzicht
+                </Button>
+                
+                <div className="text-center">
+                  <div className="text-4xl mb-2">
+                    {jobs.find(job => job.id === selectedJob)?.icon}
+                  </div>
+                  <h2 className="text-2xl font-bold">
+                    Sollicitatie: {jobs.find(job => job.id === selectedJob)?.name}
+                  </h2>
+                </div>
               </div>
 
-              <div className="bg-muted p-4 rounded-lg">
-                <h3 className="font-semibold mb-2">
-                  Vereisten voor {selectedJobData.name}:
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                  {selectedJobData.requirements.map((req, index) => (
-                    <li key={index}>{req}</li>
-                  ))}
-                </ul>
-              </div>
+              {questions.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">
+                    Er zijn nog geen vragen geconfigureerd voor deze functie.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={(e) => { e.preventDefault(); submitApplication(); }}>
+                  <div className="space-y-6">
+                    {questions.map((question, index) => (
+                      <div key={question.id}>
+                        <Label className="flex items-center gap-2 mb-2">
+                          <span className="font-medium">
+                            {index + 1}. {question.question_text}
+                          </span>
+                          {question.is_required && (
+                            <Badge variant="destructive" className="text-xs">
+                              Verplicht
+                            </Badge>
+                          )}
+                        </Label>
+                        {renderFormField(question)}
+                      </div>
+                    ))}
+                  </div>
 
-              <Button
-                type="submit"
-                className="w-full"
-                size="lg"
-                disabled={!user}
-              >
-                {user ? "Sollicitatie Indienen" : "Login Vereist"}
-              </Button>
-            </form>
-          </Card>
+                  <div className="mt-8 flex gap-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setSelectedJob(null)}
+                      className="flex-1"
+                    >
+                      Annuleren
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={submitting}
+                      className="flex-1"
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Verzenden...
+                        </>
+                      ) : (
+                        'Sollicitatie Verzenden'
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              )}
+            </Card>
+          </div>
         )}
       </div>
     </div>

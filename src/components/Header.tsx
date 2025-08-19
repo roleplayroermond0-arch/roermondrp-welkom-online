@@ -6,9 +6,10 @@ interface HeaderProps {
   setActiveTab: (tab: string) => void;
   user: any;
   onLogout: () => void;
+  onHomeClick?: () => void;
 }
 
-export const Header = ({ activeTab, setActiveTab, user, onLogout }: HeaderProps) => {
+export const Header = ({ activeTab, setActiveTab, user, onLogout, onHomeClick }: HeaderProps) => {
   const navItems = [
     { id: 'home', label: 'Home' },
     { id: 'store', label: 'Store' },
@@ -17,6 +18,13 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout }: HeaderProps)
     { id: 'applications', label: 'Sollicitaties' },
     { id: 'dashboard', label: 'Dashboard' },
   ];
+
+  const handleNavClick = (tabId: string) => {
+    if (tabId === 'home' && onHomeClick) {
+      onHomeClick();
+    }
+    setActiveTab(tabId);
+  };
 
   return (
     <header className="bg-card border-b border-border">
@@ -28,7 +36,7 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout }: HeaderProps)
               {navItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => setActiveTab(item.id)}
+                  onClick={() => handleNavClick(item.id)}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     activeTab === item.id
                       ? 'bg-primary text-primary-foreground'

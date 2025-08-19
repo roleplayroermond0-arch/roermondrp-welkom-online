@@ -6,8 +6,11 @@ import { Rules } from "@/components/Rules";
 import { Applications } from "@/components/Applications";
 import { Complaints } from "@/pages/Complaints";
 import { Dashboard } from "@/components/Dashboard";
+import { AdminPanel } from "@/components/admin/AdminPanel";
+import { AdminLoginModal } from "@/components/admin/AdminLoginModal";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { useDiscordAuth } from "@/hooks/useDiscordAuth";
+import { useAdminAccess } from "@/hooks/useAdminAccess";
 import { Loading as LoadingScreen } from "@/components/ui/loading";
 
 
@@ -15,6 +18,14 @@ const AppContent = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [userBalance] = useState(1500);
   const { user, signOut, loading } = useAuth();
+  const {
+    showAdminModal,
+    isAdminAuthenticated,
+    handleHomeClick,
+    closeAdminModal,
+    handleAdminSuccess,
+    handleAdminLogout
+  } = useAdminAccess();
   
   // Check Discord membership for authenticated users
   useDiscordAuth();
@@ -26,6 +37,11 @@ const AppContent = () => {
 
   if (loading) {
     return <LoadingScreen text="Laden..." />;
+  }
+
+  // If admin is authenticated, show admin panel
+  if (isAdminAuthenticated) {
+    return <AdminPanel onLogout={handleAdminLogout} />;
   }
 
   const renderContent = () => {
@@ -54,8 +70,16 @@ const AppContent = () => {
         setActiveTab={setActiveTab}
         user={user}
         onLogout={handleLogout}
+        onHomeClick={handleHomeClick}
       />
       {renderContent()}
+      
+      {/* Admin Login Modal */}
+      <AdminLoginModal
+        isOpen={showAdminModal}
+        onClose={closeAdminModal}
+        onSuccess={handleAdminSuccess}
+      />
     </div>
   );
 };
