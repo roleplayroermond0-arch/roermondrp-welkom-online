@@ -1,121 +1,106 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react'
-import { supabase, type User } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 import { useToast } from '@/hooks/use-toast'
-import DiscordLoginButton from "@/components/DiscordLoginButton";
+import DiscordLoginButton from "@/components/DiscordLoginButton"
 
-
-interface AuthContextType {
-  user: User | null
-  loading: boolean
-  signUp: (email: string, password: string) => Promise<void>
-  signIn: (email: string, password: string) => Promise<void>
-  signOut: () => Promise<void>
-  verifyOtp: (email: string, otp: string) => Promise<void>
-  resetPassword: (email: string) => Promise<void>
-  updatePassword: (newPassword: string, accessToken?: string) => Promise<void>
+interface AppUser {
+  id: string
+  username: string
+  avatar?: string
+  created_at: string
 }
 
-<div className="space-y-4">
-  {/* bestaand email/password form */}
-  
-  <div className="text-center text-gray-500">of</div>
-
-  <DiscordLoginButton />
-</div>
-
-
+interface AuthContextType {
+  user: AppUser | null
+  loading: boolean
+  signInWithDiscord: () => Promise<void>
+  signOut: () => Promise<void>
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const useAuth = () => {
   const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider')
   return context
 }
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<AppUser | null>(null)
   const [loading, setLoading] = useState(true)
   const { toast } = useToast()
 
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ? {
-        id: session.user.id,
-        email: session.user.email!,
-        email_confirmed_at: session.user.email_confirmed_at,
-        created_at: session.user.created_at
-      } : null)
-      setLoading(false)
-    })
+  const mapUser = async (supabaseUser: any): Promise<AppUser> => {
+    const username =
+      supabaseUser.user_metadata?.custom_claims?.global_name ||
+      supabaseUser.user_metadata?.name ||
+      supabaseUser.user_metadata?.preferred_username ||
+      supabaseUser.user_metadata?.full_name ||
+      supabaseUser.user_metadata?.user_name ||
+      supabaseUser.email?.split('@')[0] ||
+      "Onbekend"
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ? {
-        id: session.user.id,
-        email: session.user.email!,
-        email_confirmed_at: session.user.email_confirmed_at,
-        created_at: session.user.created_at
-      } : null)
-      setLoading(false)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-  const signUp = async (email: string, password: string) => {
-    setLoading(true)
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: window.location.origin
-        }
-      })
-      
-      if (error) throw error
-      
-      toast({
-        title: "Verificatie e-mail verzonden",
-        description: "Controleer je e-mail en klik op de verificatie link",
-      })
-    } catch (error: any) {
-      toast({
-        title: "Registratie mislukt",
-        description: error.message,
-        variant: "destructive",
-      })
-      throw error
-    } finally {
-      setLoading(false)
+    const appUser: AppUser = {
+      id: supabaseUser.id,
+      username,
+      avatar: supabaseUser.user_metadata?.avatar_url,
+      created_at: supabaseUser.created_at,
     }
+
+    // Sync username met Supabase profiel
+    await supabase.auth.updateUser({ data: { username } })
+
+    return appUser
   }
 
-  const signIn = async (email: string, password: string) => {
+  useEffect(() => {
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session?.user) {
+      setUser({
+        id: session.user.id,
+        username: session.user.user_metadata?.name || session.user.user_metadata?.full_name || "Onbekend",
+        avatar: session.user.user_metadata?.avatar_url,
+        created_at: session.user.created_at,
+      });
+    } else {
+      setUser(null);
+    }
+    setLoading(false);
+  });
+
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    if (session?.user) {
+      setUser({
+      id: session.user.id,
+      username: session.user.user_metadata?.name || session.user.user_metadata?.full_name || "Onbekend",
+      avatar: session.user.user_metadata?.avatar_url,
+      email: session.user.email || "Geen e-mail beschikbaar",
+      created_at: session.user.created_at,
+    });
+
+    } else {
+      setUser(null);
+    }
+    setLoading(false);
+  });
+
+  return () => subscription.unsubscribe();
+}, []);
+
+
+  const signInWithDiscord = async () => {
     setLoading(true)
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "discord",
       })
-      
       if (error) throw error
-      
-      toast({
-        title: "Succesvol ingelogd",
-        description: `Welkom terug, ${email}!`,
-      })
     } catch (error: any) {
       toast({
         title: "Inloggen mislukt",
         description: error.message,
         variant: "destructive",
       })
-      throw error
     } finally {
       setLoading(false)
     }
@@ -126,11 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const { error } = await supabase.auth.signOut()
       if (error) throw error
-      
-      toast({
-        title: "Uitgelogd",
-        description: "Je bent succesvol uitgelogd.",
-      })
+      toast({ title: "Uitgelogd", description: "Je bent succesvol uitgelogd." })
     } catch (error: any) {
       toast({
         title: "Fout bij uitloggen",
@@ -142,95 +123,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
-  const verifyOtp = async (email: string, otp: string) => {
-    setLoading(true)
-    try {
-      const { error } = await supabase.auth.verifyOtp({
-        email,
-        token: otp,
-        type: 'signup'
-      })
-      
-      if (error) throw error
-      
-      toast({
-        title: "Account geverifieerd",
-        description: "Je account is succesvol geverifieerd!",
-      })
-    } catch (error: any) {
-      toast({
-        title: "Verificatie mislukt",
-        description: error.message,
-        variant: "destructive",
-      })
-      throw error
-    } finally {
-      setLoading(false)
-    }
-  }
-  
-  const resetPassword = async (email: string) => {
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-  redirectTo: "http://localhost:8080/reset-password",
-      });
-      
-      if (error) throw error; 
-      
-      toast({
-        title: "Reset link verzonden",
-        description: "Controleer je e-mail voor de reset link.",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Reset mislukt",
-        description: error.message,
-        variant: "destructive",
-      });
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updatePassword = async (newPassword: string, accessToken?: string) => {
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.updateUser(
-        { password: newPassword },
-      
-      );
-      if (error) throw error;
-
-      toast({
-        title: "Wachtwoord aangepast",
-        description: "Je wachtwoord is succesvol gewijzigd.",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Reset mislukt",
-        description: error.message,
-        variant: "destructive",
-      });
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
-  const value = {
-  user,
-  loading,
-  signUp,
-  signIn,
-  signOut,
-  verifyOtp,
-  resetPassword,
-  updatePassword
-}
-
+  const value: AuthContextType = { user, loading, signInWithDiscord, signOut }
 
   return (
     <AuthContext.Provider value={value}>

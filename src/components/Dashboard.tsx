@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { User, CheckCircle, XCircle, ShoppingBag } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/lib/supabase"; // zorg dat dit klopt
+import { supabase } from "@/lib/supabase"; 
 
 export const Dashboard = () => {
   const { user, signOut } = useAuth();
@@ -61,26 +61,30 @@ export const Dashboard = () => {
                     Geverifieerd
                   </Badge>
                 ) : (
-                  <Badge variant="destructive">
-                    <XCircle className="mr-1 h-3 w-3" />
-                    Niet Geverifieerd
-                  </Badge>
+                    <XCircle className="mr-1 h-0 w-0" />
                 )}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid gap-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">E-mail:</span>
-                  <span className="text-sm text-muted-foreground">{user.email}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Lid sinds:</span>
-                  <span className="text-sm text-muted-foreground">
-                    {new Date(user.created_at).toLocaleDateString("nl-NL")}
-                  </span>
-                </div>
-              </div>
+              <div className="flex items-center gap-3">
+          {user.avatar ? (
+            <img
+              src={user.avatar}
+              alt={user.username}
+              className="h-15 w-12 rounded-full border border-gray-300"
+            />
+          ) : (
+            <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+              <span className="text-sm font-bold text-white">
+                {user.username.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          )}
+          <div>
+            <p className="text-sm font-medium">{user.username}</p>
+            <p className="text-xs text-muted-foreground">{user.email}</p>
+          </div>
+          </div>
             </CardContent>
           </Card>
 

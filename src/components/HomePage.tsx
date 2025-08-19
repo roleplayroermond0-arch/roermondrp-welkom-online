@@ -12,7 +12,7 @@ export const HomePage = ({ setActiveTab }: HomePageProps) => {
   };
 
   const handleDiscord = () => {
-    window.open('https://discord.gg/YyfjqXSy6k', '_blank');
+    window.open('https://discord.gg/roermondrp', '_blank');
   };
 
   <Button 
