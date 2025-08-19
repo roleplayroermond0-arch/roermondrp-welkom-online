@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/lib/supabase';
+import supabase from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 
 const DISCORD_GUILD_ID = import.meta.env.VITE_DISCORD_GUILD_ID || '1026150701891588098';

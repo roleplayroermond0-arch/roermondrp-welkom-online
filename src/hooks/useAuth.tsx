@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react'
-import { supabase } from '@/lib/supabase'
+import supabase from '@/lib/supabase'
 import { useToast } from '@/hooks/use-toast'
 import DiscordLoginButton from "@/components/DiscordLoginButton"
 
