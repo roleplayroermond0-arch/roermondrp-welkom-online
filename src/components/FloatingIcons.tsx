@@ -1,5 +1,5 @@
+import React, { useEffect, useState } from "react";
 import { Users, Shield, Heart, Clock, Car, MessageCircle } from "lucide-react";
-import { useEffect, useState } from "react";
 
 interface FloatingIcon {
   id: number;

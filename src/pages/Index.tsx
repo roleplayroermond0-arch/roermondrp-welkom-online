@@ -10,7 +10,7 @@ import { AdminPanel } from "@/components/admin/AdminPanel";
 import { AdminLoginModal } from "@/components/admin/AdminLoginModal";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { useDiscordAuth } from "@/hooks/useDiscordAuth";
-import { Loading as LoadingScreen } from "@/components/ui/loading";
+import { Loading as LoadingScreen, LoadingScreen as LoadingSpinner } from "@/components/ui/loading";
 import { useAdminAccess } from "@/hooks/useAdminAccess";
 
 
@@ -25,15 +25,15 @@ const AppContent = () => {
   } = useAdminAccess();
   
   // Check Discord membership for authenticated users
-  useDiscordAuth();
+  const { isChecking } = useDiscordAuth();
 
   const handleLogout = async () => {
     await signOut();
     setActiveTab('home');
   };
 
-  if (loading) {
-    return <LoadingScreen text="Laden..." />;
+  if (loading || isChecking) {
+    return <LoadingSpinner text="Verifiëren van toegang..." />;
   }
 
   // If admin is authenticated, show admin panel

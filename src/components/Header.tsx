@@ -54,7 +54,7 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess 
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   }`}
                 >
-                  {item.icon && <item.icon className="h-4 w-4" />}
+                  {'icon' in item && item.icon && <item.icon className="h-4 w-4" />}
                   {item.label}
                 </button>
               ))}
