@@ -10,8 +10,8 @@ import { AdminPanel } from "@/components/admin/AdminPanel";
 import { AdminLoginModal } from "@/components/admin/AdminLoginModal";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { useDiscordAuth } from "@/hooks/useDiscordAuth";
-import { useAdminAccess } from "@/hooks/useAdminAccess";
 import { Loading as LoadingScreen } from "@/components/ui/loading";
+import { useAdminAccess } from "@/hooks/useAdminAccess";
 
 
 const AppContent = () => {

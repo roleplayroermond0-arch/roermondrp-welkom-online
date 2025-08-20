@@ -1,30 +1,30 @@
-import { useState, useCallback } from 'react';
+import { useState } from "react";
+import { useIsWebAdmin } from "@/hooks/useIsWebAdmin";
+
 
 export const useAdminAccess = () => {
+  const { isAdmin, loading } = useIsWebAdmin();
+
   const [clickCount, setClickCount] = useState(0);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
-  const handleHomeClick = useCallback(() => {
+  const handleHomeClick = () => {
+    if (!isAdmin) return; // alleen admins kunnen "unlocken"
+
     setClickCount(prev => {
       const newCount = prev + 1;
+
       if (newCount >= 5) {
         setShowAdminModal(true);
-        return 0; // Reset counter
+        return 0;
       }
+
       return newCount;
     });
-
-    // Reset counter after 3 seconds of inactivity
-    setTimeout(() => {
-      setClickCount(0);
-    }, 3000);
-  }, []);
-
-  const closeAdminModal = () => {
-    setShowAdminModal(false);
-    setClickCount(0);
   };
+
+  const closeAdminModal = () => setShowAdminModal(false);
 
   const handleAdminSuccess = () => {
     setIsAdminAuthenticated(true);
@@ -36,11 +36,14 @@ export const useAdminAccess = () => {
   };
 
   return {
+    loading,
+    isAdmin,
+    clickCount,
     showAdminModal,
     isAdminAuthenticated,
     handleHomeClick,
     closeAdminModal,
     handleAdminSuccess,
-    handleAdminLogout
+    handleAdminLogout,
   };
 };

@@ -40,7 +40,7 @@ export const useDiscordAuth = () => {
         if (!isMember) {
           toast({
             title: "Toegang geweigerd",
-            description: "Je moet lid zijn van onze Discord server om toegang te krijgen. Join: https://discord.gg/P5ZEZQvdVh",
+            description: "Je moet lid zijn van onze Discord server om toegang te krijgen. Join: https://discord.gg/roermondrp",
             variant: "destructive",
           });
           

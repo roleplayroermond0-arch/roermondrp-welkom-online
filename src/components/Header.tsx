@@ -26,6 +26,17 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout, onHomeClick }:
     setActiveTab(tabId);
   };
 
+<button
+  onClick={() => {
+    setActiveTab('home');
+    if (onHomeClick) onHomeClick(); // 🚀 telt clicks bij
+  }}
+>
+  Home
+</button>
+
+
+
   return (
     <header className="bg-card border-b border-border">
       <div className="container mx-auto px-4 py-4">
