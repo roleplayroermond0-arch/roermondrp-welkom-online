@@ -1,11 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ExternalLink, ShoppingCart, MessageCircle, Users, Clock, Shield, Heart } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useSession } from "@supabase/auth-helpers-react";
-import supabase from "@/lib/supabase";
-import { useIsWebAdmin } from "@/hooks/AdminAccess"; // het stukje hierboven
-import AdminPanel from "./AdminPanel"; // jouw admin panel
+import { FloatingIcons } from "@/components/FloatingIcons";
 
 
 interface HomePageProps {
@@ -13,42 +9,6 @@ interface HomePageProps {
 }
 
 export const HomePage = ({ setActiveTab }: HomePageProps) => {
-    const [clicks, setClicks] = useState(0);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const session = useSession();
-
-  useEffect(() => {
-    const checkRole = async () => {
-      if (!session) return;
-
-      // Hier roep je straks je Edge Function aan
-      const { data, error } = await supabase.functions.invoke("check-discord-role", {
-        body: { discord_id: session.user.user_metadata.provider_id }
-      });
-
-      if (!error && data?.isAdmin) {
-        setIsAdmin(true);
-      }
-    };
-
-    checkRole();
-  }, [session]);
-
-  const handleHomeClick = () => {
-    setClicks((prev) => {
-      const newCount = prev + 1;
-
-      if (newCount === 5) {
-        if (isAdmin) {
-          window.location.href = "/admin"; // ga naar admin panel
-        } else {
-          alert("Je hebt geen toegang tot het admin paneel.");
-        }
-      }
-
-      return newCount;
-    });
-  };
 
   const handleJoinGame = () => {
     window.open('https://cfx.re/join/arj7ez', '_blank');
@@ -96,8 +56,9 @@ export const HomePage = ({ setActiveTab }: HomePageProps) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-card to-background">
-      <div className="container mx-auto px-4 py-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative">
+      <FloatingIcons />
+      <div className="container mx-auto px-4 py-20 relative z-10">
         {/* Hero Section */}
         <div className="text-center mb-20">
           <h1 className="text-7xl font-bold text-foreground mb-8">

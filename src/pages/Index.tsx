@@ -19,11 +19,8 @@ const AppContent = () => {
   const [userBalance] = useState(1500);
   const { user, signOut, loading } = useAuth();
   const {
-    showAdminModal,
     isAdminAuthenticated,
-    handleHomeClick,
-    closeAdminModal,
-    handleAdminSuccess,
+    handleAdminAccess,
     handleAdminLogout
   } = useAdminAccess();
   
@@ -70,16 +67,9 @@ const AppContent = () => {
         setActiveTab={setActiveTab}
         user={user}
         onLogout={handleLogout}
-        onHomeClick={handleHomeClick}
+        onAdminAccess={handleAdminAccess}
       />
       {renderContent()}
-      
-      {/* Admin Login Modal */}
-      <AdminLoginModal
-        isOpen={showAdminModal}
-        onClose={closeAdminModal}
-        onSuccess={handleAdminSuccess}
-      />
     </div>
   );
 };

@@ -1,16 +1,19 @@
 import { Button } from "@/components/ui/button";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, Settings } from "lucide-react";
+import { useIsWebAdmin } from "@/hooks/useIsWebAdmin";
 
 interface HeaderProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   user: any;
   onLogout: () => void;
-  onHomeClick?: () => void;
+  onAdminAccess?: () => void;
 }
 
-export const Header = ({ activeTab, setActiveTab, user, onLogout, onHomeClick }: HeaderProps) => {
-  const navItems = [
+export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess }: HeaderProps) => {
+  const { isAdmin } = useIsWebAdmin();
+  
+  const baseNavItems = [
     { id: 'home', label: 'Home' },
     { id: 'store', label: 'Store' },
     { id: 'complaints', label: 'Klachten' },
@@ -19,21 +22,18 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout, onHomeClick }:
     { id: 'dashboard', label: 'Dashboard' },
   ];
 
-  const handleNavClick = (tabId: string) => {
-    if (tabId === 'home' && onHomeClick) {
-      onHomeClick();
-    }
-    setActiveTab(tabId);
-  };
+  // Add admin tab if user has WebAdmin role
+  const navItems = isAdmin 
+    ? [...baseNavItems, { id: 'admin', label: 'Admin', icon: Settings }]
+    : baseNavItems;
 
-<button
-  onClick={() => {
-    setActiveTab('home');
-    if (onHomeClick) onHomeClick(); // 🚀 telt clicks bij
-  }}
->
-  Home
-</button>
+  const handleNavClick = (tabId: string) => {
+    if (tabId === 'admin' && onAdminAccess) {
+      onAdminAccess();
+    } else {
+      setActiveTab(tabId);
+    }
+  };
 
 
 
@@ -48,12 +48,13 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout, onHomeClick }:
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
                     activeTab === item.id
                       ? 'bg-primary text-primary-foreground'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   }`}
                 >
+                  {item.icon && <item.icon className="h-4 w-4" />}
                   {item.label}
                 </button>
               ))}
