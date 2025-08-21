@@ -58,7 +58,6 @@ export type Database = {
           id: string
           is_active: boolean | null
           password_hash: string
-          totp_secret: string
           updated_at: string | null
           username: string
         }
@@ -67,7 +66,6 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           password_hash: string
-          totp_secret: string
           updated_at?: string | null
           username: string
         }
@@ -76,8 +74,25 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           password_hash?: string
-          totp_secret?: string
           updated_at?: string | null
+          username?: string
+        }
+        Relationships: []
+      }
+      admins: {
+        Row: {
+          id: string
+          password_hash: string
+          username: string
+        }
+        Insert: {
+          id?: string
+          password_hash: string
+          username: string
+        }
+        Update: {
+          id?: string
+          password_hash?: string
           username?: string
         }
         Relationships: []
@@ -195,6 +210,42 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
+        }
+        Relationships: []
+      }
+      user_permissions: {
+        Row: {
+          created_at: string
+          discord_id: string | null
+          discord_roles: string[] | null
+          has_webadmin_role: boolean | null
+          id: string
+          is_discord_member: boolean | null
+          last_role_check: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          discord_id?: string | null
+          discord_roles?: string[] | null
+          has_webadmin_role?: boolean | null
+          id?: string
+          is_discord_member?: boolean | null
+          last_role_check?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          discord_id?: string | null
+          discord_roles?: string[] | null
+          has_webadmin_role?: boolean | null
+          id?: string
+          is_discord_member?: boolean | null
+          last_role_check?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

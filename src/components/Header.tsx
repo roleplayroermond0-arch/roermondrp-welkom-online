@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { User, LogOut, Settings } from "lucide-react";
 import { useIsWebAdmin } from "@/hooks/useIsWebAdmin";
-import { useRef, useState } from "react";
+import { SecretAdminModal } from "@/components/SecretAdminModal";
 
 interface HeaderProps {
   activeTab: string;
@@ -14,8 +15,8 @@ interface HeaderProps {
 
 export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess, onRevealSecretLogin }: HeaderProps) => {
   const { isAdmin } = useIsWebAdmin();
-  const [homeClicks, setHomeClicks] = useState(0);
-  const clickTimerRef = useRef<number | null>(null);
+  const [clickCount, setClickCount] = useState(0);
+  const [showSecretModal, setShowSecretModal] = useState(false);
   
   const baseNavItems = [
     { id: 'home', label: 'Home' },
@@ -34,25 +35,27 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess,
   const handleNavClick = (tabId: string) => {
     if (tabId === 'admin' && onAdminAccess) {
       onAdminAccess();
-      return;
+    } else if (tabId === 'home') {
+      setClickCount(prev => {
+        const newCount = prev + 1;
+        if (newCount >= 5) {
+          setShowSecretModal(true);
+          return 0;
+        }
+        // Reset after 3 seconds
+        setTimeout(() => setClickCount(0), 3000);
+        return newCount;
+      });
+      setActiveTab(tabId);
+    } else {
+      setActiveTab(tabId);
     }
-    if (tabId === 'home') {
-      const next = homeClicks + 1;
-      setHomeClicks(next);
-      // Start/reset a 3s window
-      if (clickTimerRef.current) {
-        window.clearTimeout(clickTimerRef.current);
-      }
-      clickTimerRef.current = window.setTimeout(() => {
-        setHomeClicks(0);
-      }, 3000);
+  };
 
-      if (next >= 5) {
-        setHomeClicks(0);
-        if (onRevealSecretLogin) onRevealSecretLogin();
-      }
+  const handleSecretAdminSuccess = () => {
+    if (onAdminAccess) {
+      onAdminAccess();
     }
-    setActiveTab(tabId);
   };
 
 
@@ -98,6 +101,12 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess,
           </div>
         </div>
       </div>
+      
+      <SecretAdminModal
+        isOpen={showSecretModal}
+        onClose={() => setShowSecretModal(false)}
+        onSuccess={handleSecretAdminSuccess}
+      />
     </header>
   );
 };
