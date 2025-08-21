@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Loader2 } from "lucide-react";
-import supabase from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 interface Job {
   id: string;

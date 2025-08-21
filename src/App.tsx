@@ -6,8 +6,38 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AuthCallback from "@/pages/AuthCallback";
+import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
+
 
 const queryClient = new QueryClient();
+
+function Page() {
+  const [todos, setTodos] = useState([])
+
+  
+useEffect(() => {
+  function getTodos() {
+    supabase.from('todos').select()
+      .then(({ data: todos }) => {
+        if (todos.length > 1) {
+          setTodos(todos)
+        }
+      })
+  }
+
+  getTodos()
+}, [])
+
+
+  return (
+    <div>
+      {todos.map((todo) => (
+        <li key={todo}>{todo}</li>
+      ))}
+    </div>
+  )
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

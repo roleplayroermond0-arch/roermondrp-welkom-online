@@ -2,12 +2,18 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
+import { corsHeaders } from "../_shared/cors.ts";
 
 serve(async (req: Request) => {
+  // This is needed if you're planning to invoke your function from a browser.
+  if (req.method === "OPTIONS") {
+    return new Response('ok', { headers: corsHeaders })
+  }
+
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 
@@ -28,7 +34,7 @@ serve(async (req: Request) => {
   if (error || !user) {
     return new Response(JSON.stringify({ error: "Gebruiker niet gevonden" }), {
       status: 401,
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 
@@ -37,13 +43,13 @@ serve(async (req: Request) => {
   if (!match) {
     return new Response(JSON.stringify({ error: "Wachtwoord onjuist" }), {
       status: 401,
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 
   // Succes → eventueel kun je hier een JWT of sessie token teruggeven
   return new Response(JSON.stringify({ success: true, user: { id: user.id, username: user.username } }), {
     status: 200,
-    headers: { "Content-Type": "application/json" },
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 });

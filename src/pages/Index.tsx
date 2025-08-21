@@ -10,8 +10,8 @@ import { AdminPanel } from "@/components/admin/AdminPanel";
 import { AdminLoginModal } from "@/components/admin/AdminLoginModal";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { useDiscordAuth } from "@/hooks/useDiscordAuth";
-import { Loading as LoadingScreen, LoadingScreen as LoadingSpinner } from "@/components/ui/loading";
 import { useAdminAccess } from "@/hooks/useAdminAccess";
+import { Loading as LoadingScreen } from "@/components/ui/loading";
 
 
 const AppContent = () => {
@@ -19,21 +19,24 @@ const AppContent = () => {
   const [userBalance] = useState(1500);
   const { user, signOut, loading } = useAuth();
   const {
+    showAdminModal,
     isAdminAuthenticated,
-    handleAdminAccess,
+    handleHomeClick,
+    closeAdminModal,
+    handleAdminSuccess,
     handleAdminLogout
   } = useAdminAccess();
   
   // Check Discord membership for authenticated users
-  const { isChecking } = useDiscordAuth();
+  useDiscordAuth();
 
   const handleLogout = async () => {
     await signOut();
     setActiveTab('home');
   };
 
-  if (loading || isChecking) {
-    return <LoadingSpinner text="Verifiëren van toegang..." />;
+  if (loading) {
+    return <LoadingScreen text="Laden..." />;
   }
 
   // If admin is authenticated, show admin panel
@@ -67,9 +70,16 @@ const AppContent = () => {
         setActiveTab={setActiveTab}
         user={user}
         onLogout={handleLogout}
-        onAdminAccess={handleAdminAccess}
+        onHomeClick={handleHomeClick}
       />
       {renderContent()}
+      
+      {/* Admin Login Modal */}
+      <AdminLoginModal
+        isOpen={showAdminModal}
+        onClose={closeAdminModal}
+        onSuccess={handleAdminSuccess}
+      />
     </div>
   );
 };

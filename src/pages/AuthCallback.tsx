@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import supabase from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { useNavigate } from "react-router-dom";
 
 export default function AuthCallback() {
@@ -11,10 +11,10 @@ export default function AuthCallback() {
 
       if (error || !data.session) {
         console.error("Kon sessie niet ophalen:", error?.message);
-        navigate("/login"); // terug naar login als het misgaat
+        navigate("/");
       } else {
         console.log("Ingelogd met Discord:", data.session.user);
-        navigate("/dashboard"); // naar je dashboard sturen
+        navigate("/");
       }
     };
 

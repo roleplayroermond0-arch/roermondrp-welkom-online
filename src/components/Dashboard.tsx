@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { User, CheckCircle, XCircle, ShoppingBag } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
-import supabase from "@/lib/supabase"
+import { supabase } from "@/lib/supabase"
 
 
 export const Dashboard = () => {

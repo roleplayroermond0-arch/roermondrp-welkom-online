@@ -1,54 +1,43 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import supabase from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 
-const DISCORD_GUILD_ID = '1026150701891588098';
+const DISCORD_GUILD_ID = import.meta.env.VITE_DISCORD_GUILD_ID || '1026150701891588098';
 
 export const useDiscordAuth = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
-  const [isChecking, setIsChecking] = useState(false);
 
   useEffect(() => {
     const checkDiscordMembership = async () => {
-      if (!user || isChecking) return;
+      if (!user) return;
 
-      setIsChecking(true);
       try {
         // Get the current session
         const { data: session } = await supabase.auth.getSession();
         
-        if (!session.session?.provider_token || session.session?.user?.app_metadata?.provider !== 'discord') {
-          console.log('Not a Discord login or no token available');
-          setIsChecking(false);
+        if (!session.session?.provider_token) {
+          console.log('No Discord token available');
           return;
         }
 
-        // Get Discord ID from user metadata
-        const discordId = session.session.user.user_metadata?.provider_id;
-        
-        if (!discordId) {
-          console.log('No Discord ID found');
-          setIsChecking(false);
-          return;
-        }
-
-        // Check Discord server membership and role
-        const { data, error } = await supabase.functions.invoke("check-discord-role", {
-          body: { 
-            discord_id: discordId,
-            access_token: session.session.provider_token 
-          }
+        // Check Discord server membership
+        const response = await fetch('https://discord.com/api/users/@me/guilds', {
+          headers: {
+            'Authorization': `Bearer ${session.session.provider_token}`,
+          },
         });
 
-        if (error) {
-          console.error('Discord membership check failed:', error);
-          setIsChecking(false);
+        if (!response.ok) {
+          console.error('Failed to fetch Discord guilds');
           return;
         }
 
-        if (!data?.isMember) {
+        const guilds = await response.json();
+        const isMember = guilds.some((guild: any) => guild.id === DISCORD_GUILD_ID);
+
+        if (!isMember) {
           toast({
             title: "Toegang geweigerd",
             description: "Je moet lid zijn van onze Discord server om toegang te krijgen. Join: https://discord.gg/roermondrp",
@@ -59,8 +48,6 @@ export const useDiscordAuth = () => {
         }
       } catch (error) {
         console.error('Discord membership check failed:', error);
-      } finally {
-        setIsChecking(false);
       }
     };
 
@@ -68,7 +55,7 @@ export const useDiscordAuth = () => {
     if (user && user.app_metadata?.provider === 'discord') {
       checkDiscordMembership();
     }
-  }, [user, signOut, toast, isChecking]);
+  }, [user, signOut, toast]);
 
-  return { isChecking };
+  return null;
 };

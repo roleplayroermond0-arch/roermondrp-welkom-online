@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { User, LogOut, Settings } from "lucide-react";
 import { useIsWebAdmin } from "@/hooks/useIsWebAdmin";
+import { useRef, useState } from "react";
 
 interface HeaderProps {
   activeTab: string;
@@ -8,10 +9,13 @@ interface HeaderProps {
   user: any;
   onLogout: () => void;
   onAdminAccess?: () => void;
+  onRevealSecretLogin?: () => void;
 }
 
-export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess }: HeaderProps) => {
+export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess, onRevealSecretLogin }: HeaderProps) => {
   const { isAdmin } = useIsWebAdmin();
+  const [homeClicks, setHomeClicks] = useState(0);
+  const clickTimerRef = useRef<number | null>(null);
   
   const baseNavItems = [
     { id: 'home', label: 'Home' },
@@ -30,9 +34,25 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess 
   const handleNavClick = (tabId: string) => {
     if (tabId === 'admin' && onAdminAccess) {
       onAdminAccess();
-    } else {
-      setActiveTab(tabId);
+      return;
     }
+    if (tabId === 'home') {
+      const next = homeClicks + 1;
+      setHomeClicks(next);
+      // Start/reset a 3s window
+      if (clickTimerRef.current) {
+        window.clearTimeout(clickTimerRef.current);
+      }
+      clickTimerRef.current = window.setTimeout(() => {
+        setHomeClicks(0);
+      }, 3000);
+
+      if (next >= 5) {
+        setHomeClicks(0);
+        if (onRevealSecretLogin) onRevealSecretLogin();
+      }
+    }
+    setActiveTab(tabId);
   };
 
 

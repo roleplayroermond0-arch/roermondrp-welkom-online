@@ -16,18 +16,16 @@ export function useIsWebAdmin() {
       }
 
       try {
-        // Get the current session to access provider token
+        // Get the current session
         const { data: session } = await supabase.auth.getSession();
-        
-        if (!session.session?.provider_token) {
-          console.log('No Discord token available');
-          setIsAdmin(false);
-          setLoading(false);
-          return;
-        }
-
-        // Get Discord ID from user metadata
-        const discordId = session.session.user.user_metadata?.provider_id;
+        // Try to get Discord ID from multiple possible locations
+        const identities = (session.session?.user as any)?.identities || [];
+        const discordIdentity = identities.find((i: any) => i.provider === 'discord');
+        const discordId =
+          session.session?.user?.user_metadata?.provider_id ||
+          discordIdentity?.identity_data?.sub ||
+          discordIdentity?.identity_data?.user_id ||
+          null;
         
         if (!discordId) {
           console.log('No Discord ID found');
@@ -39,8 +37,7 @@ export function useIsWebAdmin() {
         // Check Discord role using our edge function
         const { data, error } = await supabase.functions.invoke("check-discord-role", {
           body: { 
-            discord_id: discordId,
-            access_token: session.session.provider_token 
+            discord_id: discordId
           }
         });
 
