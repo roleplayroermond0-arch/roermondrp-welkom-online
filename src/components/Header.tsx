@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { User, LogOut, Settings } from "lucide-react";
 import { useIsWebAdmin } from "@/hooks/useIsWebAdmin";
+import { SecretAdminModal } from "@/components/SecretAdminModal";
 
 interface HeaderProps {
   activeTab: string;
@@ -12,6 +14,8 @@ interface HeaderProps {
 
 export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess }: HeaderProps) => {
   const { isAdmin } = useIsWebAdmin();
+  const [clickCount, setClickCount] = useState(0);
+  const [showSecretModal, setShowSecretModal] = useState(false);
   
   const baseNavItems = [
     { id: 'home', label: 'Home' },
@@ -30,8 +34,26 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess 
   const handleNavClick = (tabId: string) => {
     if (tabId === 'admin' && onAdminAccess) {
       onAdminAccess();
+    } else if (tabId === 'home') {
+      setClickCount(prev => {
+        const newCount = prev + 1;
+        if (newCount >= 5) {
+          setShowSecretModal(true);
+          return 0;
+        }
+        // Reset after 3 seconds
+        setTimeout(() => setClickCount(0), 3000);
+        return newCount;
+      });
+      setActiveTab(tabId);
     } else {
       setActiveTab(tabId);
+    }
+  };
+
+  const handleSecretAdminSuccess = () => {
+    if (onAdminAccess) {
+      onAdminAccess();
     }
   };
 
@@ -78,6 +100,12 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess 
           </div>
         </div>
       </div>
+      
+      <SecretAdminModal
+        isOpen={showSecretModal}
+        onClose={() => setShowSecretModal(false)}
+        onSuccess={handleSecretAdminSuccess}
+      />
     </header>
   );
 };

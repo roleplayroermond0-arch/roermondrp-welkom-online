@@ -15,11 +15,11 @@ serve(async (req) => {
   }
 
   try {
-    const { discord_id, access_token } = await req.json();
+    const { discord_id, access_token, user_id } = await req.json();
 
-    if (!discord_id || !access_token) {
+    if (!discord_id || !access_token || !user_id) {
       return new Response(
-        JSON.stringify({ isAdmin: false, isMember: false, error: "Missing discord_id or access_token" }),
+        JSON.stringify({ isAdmin: false, isMember: false, error: "Missing discord_id, access_token, or user_id" }),
         { 
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -36,6 +36,27 @@ serve(async (req) => {
 
     if (!guildMemberResponse.ok) {
       console.log(`Discord API error: ${guildMemberResponse.status} - ${await guildMemberResponse.text()}`);
+      
+      // Store failed check in database
+      const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+      const supabase = createClient(
+        Deno.env.get('SUPABASE_URL')!,
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+      );
+
+      await supabase
+        .from('user_permissions')
+        .upsert({
+          user_id: user_id,
+          discord_id: discord_id,
+          has_webadmin_role: false,
+          is_discord_member: false,
+          discord_roles: [],
+          last_role_check: new Date().toISOString()
+        }, {
+          onConflict: 'user_id'
+        });
+
       return new Response(
         JSON.stringify({ isAdmin: false, isMember: false, error: "User not in Discord server" }),
         { 
@@ -52,6 +73,27 @@ serve(async (req) => {
     const hasWebAdminRole = userRoles.includes(WEB_ADMIN_ROLE_ID);
 
     console.log(`Discord user ${discord_id} - Member: true, Has WebAdmin role: ${hasWebAdminRole}`);
+
+    // Store role information in database
+    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    );
+
+    // Upsert user permissions
+    await supabase
+      .from('user_permissions')
+      .upsert({
+        user_id: user_id,
+        discord_id: discord_id,
+        has_webadmin_role: hasWebAdminRole,
+        is_discord_member: true,
+        discord_roles: userRoles,
+        last_role_check: new Date().toISOString()
+      }, {
+        onConflict: 'user_id'
+      });
 
     return new Response(
       JSON.stringify({ 

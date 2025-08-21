@@ -38,7 +38,8 @@ export const useDiscordAuth = () => {
         const { data, error } = await supabase.functions.invoke("check-discord-role", {
           body: { 
             discord_id: discordId,
-            access_token: session.session.provider_token 
+            access_token: session.session.provider_token,
+            user_id: user.id
           }
         });
 
