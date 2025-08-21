@@ -1,55 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ExternalLink, ShoppingCart, MessageCircle, Users, Clock, Shield, Heart } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useSession } from "@supabase/auth-helpers-react";
-import { supabase } from "@/lib/supabase";
-import { useIsWebAdmin } from "@/hooks/AdminAccess"; // het stukje hierboven
-import AdminPanel from "./AdminPanel"; // jouw admin panel
-
 
 interface HomePageProps {
   setActiveTab: (tab: string) => void;
 }
 
 export const HomePage = ({ setActiveTab }: HomePageProps) => {
-    const [clicks, setClicks] = useState(0);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const session = useSession();
-
-  useEffect(() => {
-    const checkRole = async () => {
-      if (!session) return;
-
-      // Hier roep je straks je Edge Function aan
-      const { data, error } = await supabase.functions.invoke("check-discord-role", {
-        body: { discord_id: session.user.user_metadata.provider_id }
-      });
-
-      if (!error && data?.isAdmin) {
-        setIsAdmin(true);
-      }
-    };
-
-    checkRole();
-  }, [session]);
-
-  const handleHomeClick = () => {
-    setClicks((prev) => {
-      const newCount = prev + 1;
-
-      if (newCount === 5) {
-        if (isAdmin) {
-          window.location.href = "/admin"; // ga naar admin panel
-        } else {
-          alert("Je hebt geen toegang tot het admin paneel.");
-        }
-      }
-
-      return newCount;
-    });
-  };
-
   const handleJoinGame = () => {
     window.open('https://cfx.re/join/arj7ez', '_blank');
   };
@@ -57,15 +14,6 @@ export const HomePage = ({ setActiveTab }: HomePageProps) => {
   const handleDiscord = () => {
     window.open('https://discord.gg/roermondrp', '_blank');
   };
-
-  <Button 
-  onClick={() => window.open('https://roermond-roleplay.tebex.io/', '_blank')}
-  className="w-full"
-  size="lg"
->
-  Naar Store
-</Button>
-
 
   const features = [
     {

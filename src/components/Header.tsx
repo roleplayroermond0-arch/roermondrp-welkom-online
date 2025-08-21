@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { User, LogOut, Settings } from "lucide-react";
 import { useIsWebAdmin } from "@/hooks/useIsWebAdmin";
-import { SecretAdminModal } from "@/components/SecretAdminModal";
+import { SecretAdminLoginModal } from "@/components/admin/SecretAdminLoginModal";
 
 interface HeaderProps {
   activeTab: string;
@@ -11,9 +11,10 @@ interface HeaderProps {
   onLogout: () => void;
   onAdminAccess?: () => void;
   onRevealSecretLogin?: () => void;
+  onHomeClick?: () => void;
 }
 
-export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess, onRevealSecretLogin }: HeaderProps) => {
+export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess, onRevealSecretLogin, onHomeClick }: HeaderProps) => {
   const { isAdmin } = useIsWebAdmin();
   const [clickCount, setClickCount] = useState(0);
   const [showSecretModal, setShowSecretModal] = useState(false);
@@ -88,7 +89,7 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess,
             {user ? (
               <div className="flex items-center space-x-2">
                 <User className="h-5 w-5" />
-                <span className="text-sm">{<span>{user?.username}</span>}</span>
+                <span className="text-sm">{user?.username}</span>
                 <Button variant="ghost" size="sm" onClick={onLogout}>
                   <LogOut className="h-4 w-4" />
                 </Button>
@@ -102,7 +103,7 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess,
         </div>
       </div>
       
-      <SecretAdminModal
+      <SecretAdminLoginModal
         isOpen={showSecretModal}
         onClose={() => setShowSecretModal(false)}
         onSuccess={handleSecretAdminSuccess}
