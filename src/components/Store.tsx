@@ -14,15 +14,6 @@ export const Store = ({ user }: StoreProps) => {
   const { toast } = useToast();
 
   const handlePurchaseCoins = (purchaseUrl: string) => {
-    if (!user) {
-      toast({
-        title: "Inloggen vereist",
-        description: "Je moet ingelogd zijn om munten te kopen.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     // Open the specific purchase URL for this package
     window.open(purchaseUrl, "_blank");
   };

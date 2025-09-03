@@ -70,7 +70,7 @@ export const JOBS: Job[] = [
     id: 'police',
     name: 'Politie Agent',
     description: 'Handhaaf de wet en orde in Roermond',
-    isAcceptingApplications: true,
+    isAcceptingApplications: false,
     icon: '👮‍♂️',
     questions: [
       {
@@ -139,6 +139,39 @@ export const JOBS: Job[] = [
       {
         id: 'motivation',
         questionText: 'Waarom wil je bij de brandweer werken?',
+        questionType: 'textarea',
+        isRequired: true
+      }
+    ]
+  },
+  {
+    id: 'kmar',
+    name: 'Koninklijke Marechaussee',
+    description: 'Militaire politie en grensbewaking',
+    isAcceptingApplications: false,
+    icon: '🎖️',
+    questions: [
+      {
+        id: 'name',
+        questionText: 'Wat is je volledige naam?',
+        questionType: 'text',
+        isRequired: true
+      },
+      {
+        id: 'age',
+        questionText: 'Wat is je leeftijd?',
+        questionType: 'text',
+        isRequired: true
+      },
+      {
+        id: 'experience',
+        questionText: 'Heb je ervaring in de handhaving of militaire dienst?',
+        questionType: 'textarea',
+        isRequired: true
+      },
+      {
+        id: 'motivation',
+        questionText: 'Waarom wil je bij de Koninklijke Marechaussee werken?',
         questionType: 'textarea',
         isRequired: true
       }
