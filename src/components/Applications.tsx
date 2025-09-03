@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,91 +7,34 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Loader2 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
-
-interface Job {
-  id: string;
-  name: string;
-  description: string;
-  is_accepting_applications: boolean;
-  icon: string;
-}
-
-interface Question {
-  id: string;
-  job_id: string;
-  question_text: string;
-  question_type: string;
-  options?: string[];
-  is_required: boolean;
-  order_index: number;
-}
+import { APPLICATIONS_ENABLED, JOBS, type Job, type Question } from "@/config/applications";
 
 interface ApplicationsProps {
   user: any;
 }
 
 export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
-  const [selectedJob, setSelectedJob] = useState<string | null>(null);
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
-  useEffect(() => {
-    loadJobs();
-  }, []);
-
-  useEffect(() => {
-    if (selectedJob) {
-      loadQuestions(selectedJob);
-    }
-  }, [selectedJob]);
-
-  const loadJobs = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .order('created_at');
-
-      if (error) throw error;
-      setJobs(data || []);
-    } catch (error) {
-      console.error('Error loading jobs:', error);
-      toast({
-        title: "Error loading jobs",
-        description: "Failed to load available jobs",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadQuestions = async (jobId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('application_questions')
-        .select('*')
-        .eq('job_id', jobId)
-        .order('order_index');
-
-      if (error) throw error;
-      setQuestions(data || []);
-      setFormData({});
-    } catch (error) {
-      console.error('Error loading questions:', error);
-      toast({
-        title: "Error loading form",
-        description: "Failed to load application form",
-        variant: "destructive"
-      });
-    }
-  };
+  // Check if applications are enabled
+  if (!APPLICATIONS_ENABLED) {
+    return (
+      <div className="min-h-screen bg-background py-12">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold mb-4">Sollicitaties</h1>
+            <div className="flex items-center justify-center gap-2 text-muted-foreground">
+              <AlertCircle className="h-6 w-6" />
+              <p className="text-xl">Sollicitaties zijn momenteel uitgeschakeld.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleInputChange = (questionId: string, value: string) => {
     setFormData(prev => ({
@@ -101,7 +44,9 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
   };
 
   const validateForm = () => {
-    const requiredQuestions = questions.filter(q => q.is_required);
+    if (!selectedJob) return false;
+    
+    const requiredQuestions = selectedJob.questions.filter(q => q.isRequired);
     const missingFields = requiredQuestions.filter(q => !formData[q.id]?.trim());
     
     if (missingFields.length > 0) {
@@ -131,11 +76,11 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
     setSubmitting(true);
     
     try {
-      const selectedJobData = jobs.find(job => job.id === selectedJob);
+      if (!selectedJob) return;
       
       const embed = {
         title: "🚀 Nieuwe Sollicitatie",
-        description: `**Functie:** ${selectedJobData?.icon} ${selectedJobData?.name}`,
+        description: `**Functie:** ${selectedJob.icon} ${selectedJob.name}`,
         color: 0x00ff7f,
         fields: [
           {
@@ -155,10 +100,10 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
         }
       };
 
-      questions.forEach((question, index) => {
+      selectedJob.questions.forEach((question, index) => {
         const answer = formData[question.id] || "Niet ingevuld";
         embed.fields.push({
-          name: `${index + 1}. ${question.question_text}`,
+          name: `${index + 1}. ${question.questionText}`,
           value: answer.substring(0, 1024),
           inline: false
         });
@@ -209,7 +154,7 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
   const renderFormField = (question: Question) => {
     const value = formData[question.id] || '';
     
-    switch (question.question_type) {
+    switch (question.questionType) {
       case 'textarea':
         return (
           <Textarea
@@ -248,17 +193,6 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex items-center gap-3">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Beschikbare functies laden...</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-background py-12">
       <div className="container mx-auto px-4 max-w-4xl">
@@ -271,17 +205,17 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
 
         {!selectedJob ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {jobs.map((job) => (
+            {JOBS.map((job) => (
               <Card
                 key={job.id}
                 className={`p-6 cursor-pointer transition-all duration-200 hover:scale-105 border-2 ${
-                  job.is_accepting_applications
+                  job.isAcceptingApplications
                     ? 'hover:border-primary border-border'
                     : 'border-muted bg-muted/20 cursor-not-allowed'
                 }`}
                 onClick={() => {
-                  if (job.is_accepting_applications) {
-                    setSelectedJob(job.id);
+                  if (job.isAcceptingApplications) {
+                    setSelectedJob(job);
                   }
                 }}
               >
@@ -290,7 +224,7 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
                   <h3 className="text-xl font-semibold mb-2">{job.name}</h3>
                   <p className="text-muted-foreground mb-4">{job.description}</p>
                   
-                  {job.is_accepting_applications ? (
+                  {job.isAcceptingApplications ? (
                     <Badge className="bg-green-500 hover:bg-green-600">
                       Sollicitaties Open
                     </Badge>
@@ -323,15 +257,15 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
                 
                 <div className="text-center">
                   <div className="text-4xl mb-2">
-                    {jobs.find(job => job.id === selectedJob)?.icon}
+                    {selectedJob.icon}
                   </div>
                   <h2 className="text-2xl font-bold">
-                    Sollicitatie: {jobs.find(job => job.id === selectedJob)?.name}
+                    Sollicitatie: {selectedJob.name}
                   </h2>
                 </div>
               </div>
 
-              {questions.length === 0 ? (
+              {selectedJob.questions.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-muted-foreground">
                     Er zijn nog geen vragen geconfigureerd voor deze functie.
@@ -340,13 +274,13 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
               ) : (
                 <form onSubmit={(e) => { e.preventDefault(); submitApplication(); }}>
                   <div className="space-y-6">
-                    {questions.map((question, index) => (
+                    {selectedJob.questions.map((question, index) => (
                       <div key={question.id}>
                         <Label className="flex items-center gap-2 mb-2">
                           <span className="font-medium">
-                            {index + 1}. {question.question_text}
+                            {index + 1}. {question.questionText}
                           </span>
-                          {question.is_required && (
+                          {question.isRequired && (
                             <Badge variant="destructive" className="text-xs">
                               Verplicht
                             </Badge>

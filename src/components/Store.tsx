@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Coins, Store as StoreIcon, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { COIN_PACKAGES, TEBEX_STORE_URL } from "@/config/store";
 
 interface StoreProps {
   user: any;
@@ -12,14 +13,7 @@ interface StoreProps {
 export const Store = ({ user }: StoreProps) => {
   const { toast } = useToast();
 
-  const coinPackages = [
-    { id: 1, amount: 1000, price: 5, bonus: 0 },
-    { id: 2, amount: 2500, price: 10, bonus: 250 },
-    { id: 3, amount: 5000, price: 20, bonus: 750 },
-    { id: 4, amount: 10000, price: 35, bonus: 2000 },
-  ];
-
-  const handlePurchaseCoins = (pkg: any) => {
+  const handlePurchaseCoins = (purchaseUrl: string) => {
     if (!user) {
       toast({
         title: "Inloggen vereist",
@@ -29,10 +23,8 @@ export const Store = ({ user }: StoreProps) => {
       return;
     }
 
-    toast({
-      title: "Betaling wordt verwerkt",
-      description: `${pkg.amount + pkg.bonus} munten worden toegevoegd na betaling.`,
-    });
+    // Open the specific purchase URL for this package
+    window.open(purchaseUrl, "_blank");
   };
 
   return (
@@ -59,9 +51,7 @@ export const Store = ({ user }: StoreProps) => {
               <Button
                 size="lg"
                 className="w-full"
-                onClick={() =>
-                  window.open("https://roermond-roleplay.tebex.io/", "_blank")
-                }
+                onClick={() => window.open(TEBEX_STORE_URL, "_blank")}
               >
                 <ExternalLink className="mr-2 h-5 w-5" />
                 Open Tebex Store
@@ -74,7 +64,7 @@ export const Store = ({ user }: StoreProps) => {
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Koop Munten</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {coinPackages.map((pkg) => (
+            {COIN_PACKAGES.map((pkg) => (
               <Card
                 key={pkg.id}
                 className="p-4 text-center hover:border-primary transition-colors"
@@ -94,9 +84,7 @@ export const Store = ({ user }: StoreProps) => {
                   €{pkg.price}
                 </p>
                 <Button
-                  onClick={() =>
-                    window.open("https://roermond-roleplay.tebex.io/", "_blank")
-                  }
+                  onClick={() => handlePurchaseCoins(pkg.purchaseUrl)}
                   size="sm"
                   className="w-full hover-scale"
                 >

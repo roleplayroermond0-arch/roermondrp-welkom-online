@@ -1,25 +1,16 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { User, LogOut, Settings } from "lucide-react";
-import { useIsWebAdmin } from "@/hooks/useIsWebAdmin";
-import { SecretAdminLoginModal } from "@/components/admin/SecretAdminLoginModal";
+import { User, LogOut } from "lucide-react";
 
 interface HeaderProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   user: any;
   onLogout: () => void;
-  onAdminAccess?: () => void;
-  onRevealSecretLogin?: () => void;
-  onHomeClick?: () => void;
 }
 
-export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess, onRevealSecretLogin, onHomeClick }: HeaderProps) => {
-  const { isAdmin } = useIsWebAdmin();
-  const [clickCount, setClickCount] = useState(0);
-  const [showSecretModal, setShowSecretModal] = useState(false);
-  
-  const baseNavItems = [
+export const Header = ({ activeTab, setActiveTab, user, onLogout }: HeaderProps) => {
+  const navItems = [
     { id: 'home', label: 'Home' },
     { id: 'store', label: 'Store' },
     { id: 'complaints', label: 'Klachten' },
@@ -27,39 +18,6 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess,
     { id: 'applications', label: 'Sollicitaties' },
     { id: 'dashboard', label: 'Dashboard' },
   ];
-
-  // Add admin tab if user has WebAdmin role
-  const navItems = isAdmin 
-    ? [...baseNavItems, { id: 'admin', label: 'Admin', icon: Settings }]
-    : baseNavItems;
-
-  const handleNavClick = (tabId: string) => {
-    if (tabId === 'admin' && onAdminAccess) {
-      onAdminAccess();
-    } else if (tabId === 'home') {
-      setClickCount(prev => {
-        const newCount = prev + 1;
-        if (newCount >= 5) {
-          setShowSecretModal(true);
-          return 0;
-        }
-        // Reset after 3 seconds
-        setTimeout(() => setClickCount(0), 3000);
-        return newCount;
-      });
-      setActiveTab(tabId);
-    } else {
-      setActiveTab(tabId);
-    }
-  };
-
-  const handleSecretAdminSuccess = () => {
-    if (onAdminAccess) {
-      onAdminAccess();
-    }
-  };
-
-
 
   return (
     <header className="bg-card border-b border-border">
@@ -71,14 +29,13 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess,
               {navItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => handleNavClick(item.id)}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
+                  onClick={() => setActiveTab(item.id)}
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     activeTab === item.id
                       ? 'bg-primary text-primary-foreground'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   }`}
                 >
-                  {'icon' in item && item.icon && <item.icon className="h-4 w-4" />}
                   {item.label}
                 </button>
               ))}
@@ -102,12 +59,6 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout, onAdminAccess,
           </div>
         </div>
       </div>
-      
-      <SecretAdminLoginModal
-        isOpen={showSecretModal}
-        onClose={() => setShowSecretModal(false)}
-        onSuccess={handleSecretAdminSuccess}
-      />
     </header>
   );
 };
