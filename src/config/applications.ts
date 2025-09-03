@@ -23,7 +23,7 @@ export interface Job {
 export const JOBS: Job[] = [
   {
     id: 'ambulance',
-    name: 'Ambulance Medewerker',
+    name: 'Ambulance',
     description: 'Help mensen in nood als ambulance medewerker',
     isAcceptingApplications: true,
     icon: '🚑',
@@ -68,9 +68,9 @@ export const JOBS: Job[] = [
   },
   {
     id: 'police',
-    name: 'Politie Agent',
+    name: 'Politie',
     description: 'Handhaaf de wet en orde in Roermond',
-    isAcceptingApplications: false,
+    isAcceptingApplications: true,
     icon: '👮‍♂️',
     questions: [
       {
@@ -146,7 +146,7 @@ export const JOBS: Job[] = [
   },
   {
     id: 'kmar',
-    name: 'Koninklijke Marechaussee',
+    name: 'KMAR',
     description: 'Militaire politie en grensbewaking',
     isAcceptingApplications: false,
     icon: '🎖️',
@@ -171,7 +171,103 @@ export const JOBS: Job[] = [
       },
       {
         id: 'motivation',
-        questionText: 'Waarom wil je bij de Koninklijke Marechaussee werken?',
+        questionText: 'Waarom wil je bij de KMAR werken?',
+        questionType: 'textarea',
+        isRequired: true
+      }
+    ]
+  },
+  {
+    id: 'wegenwacht',
+    name: 'Wegenwacht',
+    description: 'Assisteer automobilisten bij pech en ongevallen',
+    isAcceptingApplications: true,
+    icon: '🛠️',
+    questions: [
+      {
+        id: 'name',
+        questionText: 'Wat is je volledige naam?',
+        questionType: 'text',
+        isRequired: true
+      },
+      {
+        id: 'age',
+        questionText: 'Wat is je leeftijd?',
+        questionType: 'text',
+        isRequired: true
+      },
+      {
+        id: 'experience',
+        questionText: 'Heb je ervaring met auto\'s of technische reparaties?',
+        questionType: 'textarea',
+        isRequired: true
+      },
+      {
+        id: 'availability',
+        questionText: 'Wanneer ben je beschikbaar?',
+        questionType: 'select',
+        options: [
+          'Doordeweeks overdag',
+          'Doordeweeks avond',
+          'Weekend',
+          'Flexibel'
+        ],
+        isRequired: true
+      },
+      {
+        id: 'motivation',
+        questionText: 'Waarom wil je bij de wegenwacht werken?',
+        questionType: 'textarea',
+        isRequired: true
+      }
+    ]
+  },
+  {
+    id: 'advocatuur',
+    name: 'Advocatuur',
+    description: 'Bied juridische bijstand en vertegenwoordiging',
+    isAcceptingApplications: true,
+    icon: '⚖️',
+    questions: [
+      {
+        id: 'name',
+        questionText: 'Wat is je volledige naam?',
+        questionType: 'text',
+        isRequired: true
+      },
+      {
+        id: 'age',
+        questionText: 'Wat is je leeftijd?',
+        questionType: 'text',
+        isRequired: true
+      },
+      {
+        id: 'education',
+        questionText: 'Wat is je educatieniveau en heb je juridische kennis?',
+        questionType: 'textarea',
+        isRequired: true
+      },
+      {
+        id: 'experience',
+        questionText: 'Heb je ervaring in het juridische veld of met roleplay advocatuur?',
+        questionType: 'textarea',
+        isRequired: true
+      },
+      {
+        id: 'availability',
+        questionText: 'Wanneer ben je beschikbaar?',
+        questionType: 'select',
+        options: [
+          'Doordeweeks overdag',
+          'Doordeweeks avond',
+          'Weekend',
+          'Flexibel'
+        ],
+        isRequired: true
+      },
+      {
+        id: 'motivation',
+        questionText: 'Waarom wil je advocaat worden in RoermondRP?',
         questionType: 'textarea',
         isRequired: true
       }
