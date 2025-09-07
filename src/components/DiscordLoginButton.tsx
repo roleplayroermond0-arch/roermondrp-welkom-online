@@ -5,7 +5,7 @@ export default function DiscordLoginButton() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "discord",
       options: {
-        redirectTo: "http://localhost:8080/auth/callback", // moet ook in Supabase Redirects staan
+        redirectTo: "https://roermond-rp.nl/auth/callback",
       },
     });
 

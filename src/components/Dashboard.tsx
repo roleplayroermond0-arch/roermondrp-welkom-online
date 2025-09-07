@@ -28,7 +28,7 @@ export const Dashboard = () => {
                 supabase.auth.signInWithOAuth({
                   provider: "discord",
                   options: {
-                    redirectTo: "http://localhost:8080", // verander dit naar je echte URL
+                    redirectTo: "https://roermond-rp.nl",
                   },
                 })
               }
