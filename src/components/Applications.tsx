@@ -51,8 +51,8 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
     
     if (missingFields.length > 0) {
       toast({
-        title: "Missing required fields",
-        description: "Please fill in all required fields before submitting",
+        title: "Vul alle velden in",
+        description: "Vul alle velden in om je sollicitatie te versturen.",
         variant: "destructive"
       });
       return false;
@@ -64,8 +64,8 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
   const submitApplication = async () => {
     if (!user) {
       toast({
-        title: "Authentication required",
-        description: "Please log in to submit an application",
+        title: "Authenticatie Vereist",
+        description: "Log in om je sollicitatie te versturen.",
         variant: "destructive"
       });
       return;
@@ -88,11 +88,6 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
             value: user.username || "Onbekend",
             inline: true
           },
-          {
-            name: "📧 Email",
-            value: user.email || "Niet beschikbaar",
-            inline: true
-          }
         ],
         timestamp: new Date().toISOString(),
         footer: {
