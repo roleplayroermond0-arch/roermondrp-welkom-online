@@ -9,16 +9,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { AlertTriangle, Send } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-// Webhook mapping
-const COMPLAINT_WEBHOOKS: Record<string, { url: string; color: number }> = {
-  staff: {
-    url: import.meta.env.VITE_DISCORD_WEBHOOK_STAFF,
-    color: 0xFF0000, // rood
-  },
-  overheid: {
-    url: import.meta.env.VITE_DISCORD_WEBHOOK_OVERHEID,
-    color: 0x0000FF, // blauw
-  },
+// Webhook color mapping
+const COMPLAINT_COLORS: Record<string, number> = {
+  staff: 0xFF0000, // rood
+  overheid: 0x0000FF, // blauw
 };
 
 export const Complaints = () => {
@@ -50,8 +44,8 @@ export const Complaints = () => {
       return;
     }
 
-    const webhook = COMPLAINT_WEBHOOKS[target];
-    if (!webhook?.url) {
+    const color = COMPLAINT_COLORS[target];
+    if (!color) {
       toast({
         title: "Configuratiefout",
         description: "Geen webhook ingesteld voor dit type klacht.",
@@ -68,7 +62,7 @@ export const Complaints = () => {
         embeds: [
           {
             title: `🚨 Nieuwe Klacht (${target})`,
-            color: webhook.color,
+            color: color,
             fields: [
               { name: "👤 Gebruiker", value: `${user.username}#${user.discriminator}` || user.username || "Onbekend", inline: true, },
               { name: "📝 Klacht", value: complaint, inline: false },
@@ -80,10 +74,15 @@ export const Complaints = () => {
         ],
       };
 
-      const response = await fetch(webhook.url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(discordMessage),
+      const response = await fetch('/api/send-discord-webhook', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: target,
+          payload: discordMessage
+        }),
       });
 
       if (!response.ok) throw new Error(`Discord webhook error: ${response.statusText}`);

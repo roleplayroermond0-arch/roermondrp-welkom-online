@@ -26,51 +26,50 @@ Edit `src/config/store.ts` to:
 - Configure coin packages with custom purchase URLs
 - Set the main Tebex store URL
 
-### MySQL Database (Production)
+## Security
 
-Update your production environment variables for MySQL connection:
-```
-MYSQL_HOST=your_production_mysql_host
-MYSQL_USER=your_production_username
-MYSQL_PASSWORD=your_production_password
-MYSQL_DATABASE=roermondRP
-MYSQL_PORT=3306
-```
+This application implements several security best practices:
 
-## Database Schema
+### ⚠️ Critical Security Configuration
 
-Required MySQL tables:
-- `users` - User profiles and Discord data
-- `user_balances` - User coin balances
-- `applications` - Job applications
-- `purchases` - Store purchase history
+1. **Discord Credentials**: All Discord bot tokens and webhook URLs are stored server-side only
+   - `DISCORD_BOT_TOKEN`: Never exposed to frontend (used only in Supabase Edge Functions)
+   - `DISCORD_WEBHOOK_*`: Accessed via secure Edge Functions, not directly from frontend
 
-## Environment Variables (Production)
+2. **Environment Variables**: Only safe, public variables use the `VITE_` prefix
+   - `VITE_DISCORD_GUILD_ID`: Guild ID (public, safe to expose)
+   - `VITE_SUPABASE_*`: Public Supabase keys (designed to be client-side safe)
 
-Create environment variables for production:
-```
-# Discord Webhooks (keep existing values)
-VITE_DISCORD_WEBHOOK_STAFF=your_webhook_url
-VITE_DISCORD_WEBHOOK_OVERHEID=your_webhook_url
-VITE_DISCORD_WEBHOOK_URL=your_webhook_url
-VITE_DISCORD_GUILD_ID=1026150701891588098
+3. **Webhook Security**: All Discord webhooks are called through Supabase Edge Functions
+   - Frontend → Edge Function → Discord (secure)
+   - Not: Frontend → Discord (insecure)
 
-# Supabase (keep existing values)
+### Required Environment Variables for Production
+
+Ensure these are set in your hosting environment:
+
+```bash
+# Safe for frontend (use VITE_ prefix)
 VITE_SUPABASE_URL=https://pqgphylharoznvxvfcwz.supabase.co
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 VITE_SUPABASE_PROJECT_ID=pqgphylharoznvxvfcwz
+VITE_DISCORD_GUILD_ID=1026150701891588098
 
-# MySQL Production
-MYSQL_HOST=your_production_host
-MYSQL_USER=your_production_user
-MYSQL_PASSWORD=your_production_password
-MYSQL_DATABASE=roermondRP
-MYSQL_PORT=3306
-
-# Discord Bot
-DISCORD_BOT_TOKEN=your_bot_token
-DISCORD_WEBADMIN_ROLE_ID=1407374252499538001
+# Server-side only (Supabase Edge Functions - NO VITE_ prefix)
+DISCORD_BOT_TOKEN=your_discord_bot_token
+DISCORD_WEBHOOK_STAFF=your_staff_webhook_url
+DISCORD_WEBHOOK_OVERHEID=your_overheid_webhook_url
+DISCORD_WEBHOOK_URL=your_general_webhook_url
+DISCORD_WEBADMIN_ROLE_ID=your_webadmin_role_id
 ```
+
+## MySQL Database (Production)
+
+⚠️ **Note**: MySQL integration has been removed from frontend for security. Use Supabase for all database operations.
+
+## Environment Variables (Production)
+
+**DEPRECATED**: The environment variables section below has been replaced with the Security section above for better security practices.
 
 ## Production Deployment
 

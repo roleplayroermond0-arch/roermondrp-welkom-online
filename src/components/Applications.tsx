@@ -110,20 +110,20 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
         avatar_url: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
       };
 
-      const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_STAFF;
-      
-      if (webhookUrl) {
-        const response = await fetch(webhookUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(webhookPayload)
-        });
+      // Send via secure edge function
+      const response = await fetch('/api/send-discord-webhook', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'staff',
+          payload: webhookPayload
+        })
+      });
 
-        if (!response.ok) {
-          throw new Error('Failed to send to Discord');
-        }
+      if (!response.ok) {
+        throw new Error('Failed to send to Discord');
       }
 
       toast({
