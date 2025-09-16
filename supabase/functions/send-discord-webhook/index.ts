@@ -32,6 +32,28 @@ serve(async (req) => {
       case 'general':
         webhookUrl = Deno.env.get("DISCORD_WEBHOOK_URL");
         break;
+      // Job-specific webhooks
+      case 'taxi':
+        webhookUrl = Deno.env.get("DISCORD_WEBHOOK_TAXI");
+        break;
+      case 'ambulance':
+        webhookUrl = Deno.env.get("DISCORD_WEBHOOK_AMBULANCE");
+        break;
+      case 'police':
+        webhookUrl = Deno.env.get("DISCORD_WEBHOOK_POLICE");
+        break;
+      case 'kmar':
+        webhookUrl = Deno.env.get("DISCORD_WEBHOOK_KMAR");
+        break;
+      case 'wegenwacht':
+        webhookUrl = Deno.env.get("DISCORD_WEBHOOK_WEGENWACHT");
+        break;
+      case 'advocatuur':
+        webhookUrl = Deno.env.get("DISCORD_WEBHOOK_ADVOCATUUR");
+        break;
+      case 'anwb':
+        webhookUrl = Deno.env.get("DISCORD_WEBHOOK_ANWB");
+        break;
       default:
         return new Response(
           JSON.stringify({ error: "Invalid webhook type" }), 

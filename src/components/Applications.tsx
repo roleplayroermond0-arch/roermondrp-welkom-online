@@ -117,7 +117,7 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          type: 'staff',
+          type: selectedJob.webhookUrl || 'staff',
           payload: webhookPayload
         })
       });

@@ -39,8 +39,8 @@ export const HomePage = ({ setActiveTab }: HomePageProps) => {
   ];
 
   const jobs = [
-    "Politie", "Ambulance", "ANWB", "Taxi", "Mechaniker", 
-    "Advocaat", "Rechter", "Ondernemer", "Crimineel", "Burger"
+    "Politie", "Ambulance", "ANWB", "Taxi", "KMAR", "Wegenwacht",
+    "Advocaat", "Crimineel", "Burger"
   ];
 
   return (

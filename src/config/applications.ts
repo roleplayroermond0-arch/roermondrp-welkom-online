@@ -17,16 +17,64 @@ export interface Job {
   description: string;
   isAcceptingApplications: boolean;
   icon: string;
+  webhookUrl?: string;
   questions: Question[];
 }
 
 export const JOBS: Job[] = [
+  {
+    id: 'taxi',
+    name: 'Taxi',
+    description: 'Vervoer passagiers door de stad',
+    isAcceptingApplications: true,
+    icon: '🚕',
+    webhookUrl: 'taxi',
+    questions: [
+      {
+        id: 'name',
+        questionText: 'Wat is je volledige naam?',
+        questionType: 'text',
+        isRequired: true
+      },
+      {
+        id: 'age',
+        questionText: 'Wat is je leeftijd?',
+        questionType: 'text',
+        isRequired: true
+      },
+      {
+        id: 'experience',
+        questionText: 'Heb je ervaring met rijden of klantenservice?',
+        questionType: 'textarea',
+        isRequired: true
+      },
+      {
+        id: 'availability',
+        questionText: 'Wanneer ben je beschikbaar?',
+        questionType: 'select',
+        options: [
+          'Doordeweeks overdag',
+          'Doordeweeks avond',
+          'Weekend',
+          'Flexibel'
+        ],
+        isRequired: true
+      },
+      {
+        id: 'motivation',
+        questionText: 'Waarom wil je taxi chauffeur worden?',
+        questionType: 'textarea',
+        isRequired: true
+      }
+    ]
+  },
   {
     id: 'ambulance',
     name: 'Ambulance',
     description: 'Help mensen in nood als ambulance medewerker',
     isAcceptingApplications: true,
     icon: '🚑',
+    webhookUrl: 'ambulance',
     questions: [
       {
         id: 'name',
@@ -72,6 +120,7 @@ export const JOBS: Job[] = [
     description: 'Handhaaf de wet en orde in Roermond',
     isAcceptingApplications: true,
     icon: '👮‍♂️',
+    webhookUrl: 'police',
     questions: [
       {
         id: 'name',
@@ -112,44 +161,12 @@ export const JOBS: Job[] = [
     ]
   },
   {
-    id: 'fire',
-    name: 'Brandweer',
-    description: 'Blus branden en help bij noodsituaties',
-    isAcceptingApplications: false,
-    icon: '🚒',
-    questions: [
-      {
-        id: 'name',
-        questionText: 'Wat is je volledige naam?',
-        questionType: 'text',
-        isRequired: true
-      },
-      {
-        id: 'age',
-        questionText: 'Wat is je leeftijd?',
-        questionType: 'text',
-        isRequired: true
-      },
-      {
-        id: 'experience',
-        questionText: 'Heb je ervaring met brandbestrijding of hulpverlening?',
-        questionType: 'textarea',
-        isRequired: true
-      },
-      {
-        id: 'motivation',
-        questionText: 'Waarom wil je bij de brandweer werken?',
-        questionType: 'textarea',
-        isRequired: true
-      }
-    ]
-  },
-  {
     id: 'kmar',
     name: 'KMAR',
     description: 'Militaire politie en grensbewaking',
     isAcceptingApplications: false,
     icon: '🎖️',
+    webhookUrl: 'kmar',
     questions: [
       {
         id: 'name',
@@ -183,6 +200,7 @@ export const JOBS: Job[] = [
     description: 'Assisteer automobilisten bij pech en ongevallen',
     isAcceptingApplications: true,
     icon: '🛠️',
+    webhookUrl: 'wegenwacht',
     questions: [
       {
         id: 'name',
@@ -228,6 +246,7 @@ export const JOBS: Job[] = [
     description: 'Bied juridische bijstand en vertegenwoordiging',
     isAcceptingApplications: true,
     icon: '⚖️',
+    webhookUrl: 'advocatuur',
     questions: [
       {
         id: 'name',
@@ -268,6 +287,52 @@ export const JOBS: Job[] = [
       {
         id: 'motivation',
         questionText: 'Waarom wil je advocaat worden in RoermondRP?',
+        questionType: 'textarea',
+        isRequired: true
+      }
+    ]
+  },
+  {
+    id: 'anwb',
+    name: 'ANWB',
+    description: 'Wegenhulp en verkeersbegeleiding',
+    isAcceptingApplications: true,
+    icon: '🚗',
+    webhookUrl: 'anwb',
+    questions: [
+      {
+        id: 'name',
+        questionText: 'Wat is je volledige naam?',
+        questionType: 'text',
+        isRequired: true
+      },
+      {
+        id: 'age',
+        questionText: 'Wat is je leeftijd?',
+        questionType: 'text',
+        isRequired: true
+      },
+      {
+        id: 'experience',
+        questionText: 'Heb je ervaring met wegenhulp of verkeersbegeleiding?',
+        questionType: 'textarea',
+        isRequired: true
+      },
+      {
+        id: 'availability',
+        questionText: 'Wanneer ben je beschikbaar?',
+        questionType: 'select',
+        options: [
+          'Doordeweeks overdag',
+          'Doordeweeks avond',
+          'Weekend',
+          'Flexibel'
+        ],
+        isRequired: true
+      },
+      {
+        id: 'motivation',
+        questionText: 'Waarom wil je bij ANWB werken?',
         questionType: 'textarea',
         isRequired: true
       }
