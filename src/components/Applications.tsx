@@ -110,16 +110,13 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
         avatar_url: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
       };
 
-      // Send via secure edge function
-      const response = await fetch('/api/send-discord-webhook', {
+      // Send directly to Discord webhook
+      const response = await fetch(selectedJob.webhookUrl!, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          type: selectedJob.webhookUrl || 'staff',
-          payload: webhookPayload
-        })
+        body: JSON.stringify(webhookPayload)
       });
 
       if (!response.ok) {

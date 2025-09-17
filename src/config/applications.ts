@@ -28,7 +28,7 @@ export const JOBS: Job[] = [
     description: 'Vervoer passagiers door de stad',
     isAcceptingApplications: true,
     icon: '🚕',
-    webhookUrl: 'taxi',
+    webhookUrl: 'https://discord.com/api/webhooks/YOUR_TAXI_WEBHOOK_ID/YOUR_TAXI_WEBHOOK_TOKEN',
     questions: [
       {
         id: 'name',
@@ -74,7 +74,7 @@ export const JOBS: Job[] = [
     description: 'Help mensen in nood als ambulance medewerker',
     isAcceptingApplications: true,
     icon: '🚑',
-    webhookUrl: 'ambulance',
+    webhookUrl: 'https://discord.com/api/webhooks/YOUR_AMBULANCE_WEBHOOK_ID/YOUR_AMBULANCE_WEBHOOK_TOKEN',
     questions: [
       {
         id: 'name',
@@ -120,7 +120,7 @@ export const JOBS: Job[] = [
     description: 'Handhaaf de wet en orde in Roermond',
     isAcceptingApplications: true,
     icon: '👮‍♂️',
-    webhookUrl: 'police',
+    webhookUrl: 'https://discord.com/api/webhooks/YOUR_POLICE_WEBHOOK_ID/YOUR_POLICE_WEBHOOK_TOKEN',
     questions: [
       {
         id: 'name',
@@ -166,7 +166,7 @@ export const JOBS: Job[] = [
     description: 'Militaire politie en grensbewaking',
     isAcceptingApplications: false,
     icon: '🎖️',
-    webhookUrl: 'kmar',
+    webhookUrl: 'https://discord.com/api/webhooks/YOUR_KMAR_WEBHOOK_ID/YOUR_KMAR_WEBHOOK_TOKEN',
     questions: [
       {
         id: 'name',
@@ -200,7 +200,7 @@ export const JOBS: Job[] = [
     description: 'Assisteer automobilisten bij pech en ongevallen',
     isAcceptingApplications: true,
     icon: '🛠️',
-    webhookUrl: 'wegenwacht',
+    webhookUrl: 'https://discord.com/api/webhooks/YOUR_WEGENWACHT_WEBHOOK_ID/YOUR_WEGENWACHT_WEBHOOK_TOKEN',
     questions: [
       {
         id: 'name',
@@ -246,7 +246,7 @@ export const JOBS: Job[] = [
     description: 'Bied juridische bijstand en vertegenwoordiging',
     isAcceptingApplications: true,
     icon: '⚖️',
-    webhookUrl: 'advocatuur',
+    webhookUrl: 'https://discord.com/api/webhooks/YOUR_ADVOCATUUR_WEBHOOK_ID/YOUR_ADVOCATUUR_WEBHOOK_TOKEN',
     questions: [
       {
         id: 'name',
@@ -298,7 +298,7 @@ export const JOBS: Job[] = [
     description: 'Wegenhulp en verkeersbegeleiding',
     isAcceptingApplications: true,
     icon: '🚗',
-    webhookUrl: 'anwb',
+    webhookUrl: 'https://discord.com/api/webhooks/YOUR_ANWB_WEBHOOK_ID/YOUR_ANWB_WEBHOOK_TOKEN',
     questions: [
       {
         id: 'name',
