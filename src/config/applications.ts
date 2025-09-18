@@ -17,7 +17,6 @@ export interface Job {
   description: string;
   isAcceptingApplications: boolean;
   icon: string;
-  webhookUrl?: string;
   questions: Question[];
 }
 
@@ -28,7 +27,7 @@ export const JOBS: Job[] = [
     description: 'Vervoer passagiers door de stad',
     isAcceptingApplications: true,
     icon: '🚕',
-    webhookUrl: import.meta.env.VITE_DISCORD_WEBHOOK_TAXI,
+    
     questions: [
       {
         id: 'name',
@@ -74,7 +73,7 @@ export const JOBS: Job[] = [
     description: 'Help mensen in nood als ambulance medewerker',
     isAcceptingApplications: true,
     icon: '🚑',
-    webhookUrl: import.meta.env.VITE_DISCORD_WEBHOOK_AMBULANCE,
+    
     questions: [
       {
         id: 'name',
@@ -120,7 +119,7 @@ export const JOBS: Job[] = [
     description: 'Handhaaf de wet en orde in Roermond',
     isAcceptingApplications: true,
     icon: '👮‍♂️',
-    webhookUrl: import.meta.env.VITE_DISCORD_WEBHOOK_POLICE,
+    
     questions: [
       {
         id: 'name',
@@ -166,7 +165,7 @@ export const JOBS: Job[] = [
     description: 'Militaire politie en grensbewaking',
     isAcceptingApplications: false,
     icon: '🎖️',
-    webhookUrl: import.meta.env.VITE_DISCORD_WEBHOOK_KMAR,
+    
     questions: [
       {
         id: 'name',
@@ -200,7 +199,7 @@ export const JOBS: Job[] = [
     description: 'Assisteer automobilisten bij pech en ongevallen',
     isAcceptingApplications: true,
     icon: '🛠️',
-    webhookUrl: import.meta.env.VITE_DISCORD_WEBHOOK_WEGENWACHT,
+    
     questions: [
       {
         id: 'name',
@@ -246,7 +245,7 @@ export const JOBS: Job[] = [
     description: 'Bied juridische bijstand en vertegenwoordiging',
     isAcceptingApplications: true,
     icon: '⚖️',
-    webhookUrl: import.meta.env.VITE_DISCORD_WEBHOOK_ADVOCATUUR,
+    
     questions: [
       {
         id: 'name',
@@ -298,7 +297,7 @@ export const JOBS: Job[] = [
     description: 'Wegenhulp en verkeersbegeleiding',
     isAcceptingApplications: true,
     icon: '🚗',
-    webhookUrl: import.meta.env.VITE_DISCORD_WEBHOOK_ANWB,
+    
     questions: [
       {
         id: 'name',

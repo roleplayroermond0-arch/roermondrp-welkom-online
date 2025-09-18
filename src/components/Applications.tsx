@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { APPLICATIONS_ENABLED, JOBS, type Job, type Question } from "@/config/applications";
+import { supabase } from '@/integrations/supabase/client';
 
 interface ApplicationsProps {
   user: any;
@@ -110,17 +111,16 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
         avatar_url: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
       };
 
-      // Send directly to Discord webhook
-      const response = await fetch(selectedJob.webhookUrl!, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(webhookPayload)
+      // Send to server-side edge function to handle webhook securely
+      const response = await supabase.functions.invoke('send-job-application-webhook', {
+        body: {
+          jobType: selectedJob.name,
+          embed: embed
+        }
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to send to Discord');
+      if (response.error) {
+        throw new Error(response.error.message || 'Failed to send application');
       }
 
       toast({
