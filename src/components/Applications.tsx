@@ -123,6 +123,12 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
         throw new Error(response.error.message || 'Failed to send application');
       }
 
+      if (response.data?.error) {
+        const errorData = response.data;
+        console.error('Webhook error details:', errorData);
+        throw new Error(`${errorData.error}${errorData.details ? ` (${errorData.details})` : ''}`);
+      }
+
       toast({
         title: "Sollicitatie verzonden!",
         description: "Je sollicitatie is succesvol verzonden en wordt binnenkort beoordeeld.",

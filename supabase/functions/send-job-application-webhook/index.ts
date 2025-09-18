@@ -9,6 +9,8 @@ serve(async (req) => {
   try {
     const { jobType, embed } = await req.json();
     
+    console.log(`Processing application for job type: ${jobType}`);
+    
     if (!jobType || !embed) {
       return new Response(
         JSON.stringify({ error: "Job type and embed are required" }), 
@@ -54,13 +56,15 @@ serve(async (req) => {
     if (!webhookUrl) {
       console.error(`Webhook URL not found for job type: ${jobType}`);
       return new Response(
-        JSON.stringify({ error: "Webhook configuration error" }), 
+        JSON.stringify({ error: `Webhook configuration error for job type: ${jobType}` }), 
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 500 
         }
       );
     }
+
+    console.log(`Sending application for job type: ${jobType} to webhook: ${webhookUrl.substring(0, 50)}...`);
 
     const webhookPayload = {
       embeds: [embed],
@@ -79,15 +83,21 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Discord webhook error:', response.status, errorText);
+      console.error(`Discord webhook error for ${jobType}: ${response.status} ${errorText}`);
       return new Response(
-        JSON.stringify({ error: "Failed to send webhook" }), 
+        JSON.stringify({ 
+          error: `Failed to send webhook for ${jobType}`, 
+          details: `Status: ${response.status}`,
+          jobType: jobType
+        }), 
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 500 
         }
       );
     }
+
+    console.log(`Successfully sent application for ${jobType}`);
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
