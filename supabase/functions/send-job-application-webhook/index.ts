@@ -41,9 +41,6 @@ serve(async (req) => {
       case 'advocatuur':
         webhookUrl = Deno.env.get("DISCORD_WEBHOOK_ADVOCATUUR");
         break;
-      case 'anwb':
-        webhookUrl = Deno.env.get("DISCORD_WEBHOOK_ANWB");
-        break;
       default:
         return new Response(
           JSON.stringify({ error: "Invalid job type" }), 

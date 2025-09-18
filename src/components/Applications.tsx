@@ -114,7 +114,7 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
       // Send to server-side edge function to handle webhook securely
       const response = await supabase.functions.invoke('send-job-application-webhook', {
         body: {
-          jobType: selectedJob.name,
+          jobType: selectedJob.id,
           embed: embed
         }
       });

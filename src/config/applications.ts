@@ -290,51 +290,5 @@ export const JOBS: Job[] = [
         isRequired: true
       }
     ]
-  },
-  {
-    id: 'anwb',
-    name: 'ANWB',
-    description: 'Wegenhulp en verkeersbegeleiding',
-    isAcceptingApplications: true,
-    icon: '🚗',
-    
-    questions: [
-      {
-        id: 'name',
-        questionText: 'Wat is je volledige naam?',
-        questionType: 'text',
-        isRequired: true
-      },
-      {
-        id: 'age',
-        questionText: 'Wat is je leeftijd?',
-        questionType: 'text',
-        isRequired: true
-      },
-      {
-        id: 'experience',
-        questionText: 'Heb je ervaring met wegenhulp of verkeersbegeleiding?',
-        questionType: 'textarea',
-        isRequired: true
-      },
-      {
-        id: 'availability',
-        questionText: 'Wanneer ben je beschikbaar?',
-        questionType: 'select',
-        options: [
-          'Doordeweeks overdag',
-          'Doordeweeks avond',
-          'Weekend',
-          'Flexibel'
-        ],
-        isRequired: true
-      },
-      {
-        id: 'motivation',
-        questionText: 'Waarom wil je bij ANWB werken?',
-        questionType: 'textarea',
-        isRequired: true
-      }
-    ]
   }
 ];
