@@ -10,6 +10,14 @@ serve(async (req) => {
     const { jobType, embed } = await req.json();
     
     console.log(`Processing application for job type: ${jobType}`);
+    console.log(`Available environment variables:`, {
+      taxi: !!Deno.env.get("DISCORD_WEBHOOK_TAXI"),
+      ambulance: !!Deno.env.get("DISCORD_WEBHOOK_AMBULANCE"),
+      police: !!Deno.env.get("DISCORD_WEBHOOK_POLICE"),
+      kmar: !!Deno.env.get("DISCORD_WEBHOOK_KMAR"),
+      wegenwacht: !!Deno.env.get("DISCORD_WEBHOOK_WEGENWACHT"),
+      advocatuur: !!Deno.env.get("DISCORD_WEBHOOK_ADVOCATUUR")
+    });
     
     if (!jobType || !embed) {
       return new Response(
