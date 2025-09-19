@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "13.0.4"
+    PostgrestVersion: "13.0.5"
   }
   public: {
     Tables: {
@@ -97,6 +97,45 @@ export type Database = {
         }
         Relationships: []
       }
+      application_answers: {
+        Row: {
+          answer: string
+          application_id: string
+          created_at: string | null
+          id: string
+          question_id: string
+        }
+        Insert: {
+          answer: string
+          application_id: string
+          created_at?: string | null
+          id?: string
+          question_id: string
+        }
+        Update: {
+          answer?: string
+          application_id?: string
+          created_at?: string | null
+          id?: string
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "application_answers_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "application_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "application_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       application_questions: {
         Row: {
           created_at: string | null
@@ -134,6 +173,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "application_questions_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      applications: {
+        Row: {
+          applicant_name: string
+          availability: string | null
+          created_at: string | null
+          id: string
+          job_id: string
+          motivation: string
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          applicant_name: string
+          availability?: string | null
+          created_at?: string | null
+          id?: string
+          job_id: string
+          motivation: string
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          applicant_name?: string
+          availability?: string | null
+          created_at?: string | null
+          id?: string
+          job_id?: string
+          motivation?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_job_id_fkey"
             columns: ["job_id"]
             isOneToOne: false
             referencedRelation: "jobs"
@@ -210,6 +293,104 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
+        }
+        Relationships: []
+      }
+      purchases: {
+        Row: {
+          created_at: string | null
+          id: string
+          quantity: number | null
+          shop_item_id: string
+          status: string | null
+          total_price: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          quantity?: number | null
+          shop_item_id: string
+          status?: string | null
+          total_price: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          quantity?: number | null
+          shop_item_id?: string
+          status?: string | null
+          total_price?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchases_shop_item_id_fkey"
+            columns: ["shop_item_id"]
+            isOneToOne: false
+            referencedRelation: "shop_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shop_items: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_available: boolean | null
+          name: string
+          price: number
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_available?: boolean | null
+          name: string
+          price: number
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_available?: boolean | null
+          name?: string
+          price?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_balances: {
+        Row: {
+          created_at: string | null
+          id: string
+          munten: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          munten?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          munten?: number | null
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
