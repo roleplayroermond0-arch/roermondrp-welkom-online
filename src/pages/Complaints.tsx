@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { AlertTriangle, Send } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { supabase } from '@/integrations/supabase/client';
 
 // Webhook color mapping
 const COMPLAINT_COLORS: Record<string, number> = {
@@ -57,35 +58,23 @@ export const Complaints = () => {
     setIsSubmitting(true);
 
     try {
-      // Discord embed payload
-      const discordMessage = {
-        embeds: [
-          {
-            title: `🚨 Nieuwe Klacht (${target})`,
-            color: color,
-            fields: [
-              { name: "👤 Gebruiker", value: `${user.username}#${user.discriminator}` || user.username || "Onbekend", inline: true, },
-              { name: "📝 Klacht", value: complaint, inline: false },
-              { name: "🔗 Bewijs (Optioneel)", value: evidenceLink || "Geen bewijs verstrekt", inline: false },
-            ],
-            timestamp: new Date().toISOString(),
-            footer: { text: "RoermondRP Klachten Systeem" },
-          },
-        ],
-      };
-
-      const response = await fetch('/api/send-discord-webhook', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: target,
-          payload: discordMessage
-        }),
+      // Call the Supabase edge function
+      const { data, error } = await supabase.functions.invoke('send-complaint', {
+        body: {
+          target: target,
+          complaint: complaint,
+          evidence: evidenceLink,
+          user: {
+            username: user.username || 'Onbekend',
+            discordId: user.id || 'Onbekend',
+            avatar: user.avatar_url
+          }
+        }
       });
 
-      if (!response.ok) throw new Error(`Discord webhook error: ${response.statusText}`);
+      if (error) {
+        throw new Error(error.message);
+      }
 
       toast({
         title: "Klacht ingediend",
