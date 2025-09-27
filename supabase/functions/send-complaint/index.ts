@@ -52,7 +52,7 @@ const handler = async (req: Request): Promise<Response> => {
     };
 
     // Create Discord embed
-    const embed = {
+    const embed: any = {
       title: `Nieuwe Klacht - ${target === 'staff' ? 'Staff' : 'Overheid'}`,
       description: complaint,
       color: colors[target],
@@ -64,7 +64,7 @@ const handler = async (req: Request): Promise<Response> => {
         },
         {
           name: "Discord ID",
-          value: user.discordId,
+          value: user.discordId || 'Niet beschikbaar',
           inline: true
         }
       ],

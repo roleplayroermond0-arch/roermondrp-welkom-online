@@ -185,6 +185,7 @@ export type Database = {
           applicant_name: string
           availability: string | null
           created_at: string | null
+          discord_id: string | null
           id: string
           job_id: string
           motivation: string
@@ -196,6 +197,7 @@ export type Database = {
           applicant_name: string
           availability?: string | null
           created_at?: string | null
+          discord_id?: string | null
           id?: string
           job_id: string
           motivation: string
@@ -207,6 +209,7 @@ export type Database = {
           applicant_name?: string
           availability?: string | null
           created_at?: string | null
+          discord_id?: string | null
           id?: string
           job_id?: string
           motivation?: string
@@ -299,6 +302,7 @@ export type Database = {
       purchases: {
         Row: {
           created_at: string | null
+          discord_id: string | null
           id: string
           quantity: number | null
           shop_item_id: string
@@ -308,6 +312,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          discord_id?: string | null
           id?: string
           quantity?: number | null
           shop_item_id: string
@@ -317,6 +322,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          discord_id?: string | null
           id?: string
           quantity?: number | null
           shop_item_id?: string

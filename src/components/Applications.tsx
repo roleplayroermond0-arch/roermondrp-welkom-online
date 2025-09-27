@@ -115,7 +115,8 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
       const response = await supabase.functions.invoke('send-job-application-webhook', {
         body: {
           jobType: selectedJob.id,
-          embed: embed
+          embed: embed,
+          userDiscordId: user.id // Send Discord ID instead of UID
         }
       });
 
@@ -152,15 +153,44 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
   const renderFormField = (question: Question) => {
     const value = formData[question.id] || '';
     
+    // Determine max length and input type based on question content
+    const isAge = question.questionText.toLowerCase().includes('leeftijd') || 
+                  question.questionText.toLowerCase().includes('oud ben je');
+    const isName = question.questionText.toLowerCase().includes('naam');
+    const maxLength = isName ? 20 : 330;
+    const inputType = isAge ? 'number' : 'text';
+    
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      let newValue = e.target.value;
+      
+      // For age fields, only allow numbers
+      if (isAge && !/^\d*$/.test(newValue)) {
+        return; // Don't update if contains non-numeric characters
+      }
+      
+      // Apply max length restriction
+      if (newValue.length > maxLength) {
+        newValue = newValue.substring(0, maxLength);
+      }
+      
+      handleInputChange(question.id, newValue);
+    };
+    
     switch (question.questionType) {
       case 'textarea':
         return (
-          <Textarea
-            value={value}
-            onChange={(e) => handleInputChange(question.id, e.target.value)}
-            placeholder="Voer je antwoord in..."
-            className="min-h-[100px]"
-          />
+          <div className="relative">
+            <Textarea
+              value={value}
+              onChange={handleChange}
+              placeholder="Voer je antwoord in..."
+              className="min-h-[100px]"
+              maxLength={maxLength}
+            />
+            <div className="text-xs text-muted-foreground mt-1 text-right">
+              {value.length}/{maxLength}
+            </div>
+          </div>
         );
       
       case 'select':
@@ -181,12 +211,20 @@ export const Applications: React.FC<ApplicationsProps> = ({ user }) => {
       
       default:
         return (
-          <Input
-            type="text"
-            value={value}
-            onChange={(e) => handleInputChange(question.id, e.target.value)}
-            placeholder="Voer je antwoord in..."
-          />
+          <div className="relative">
+            <Input
+              type={inputType}
+              value={value}
+              onChange={handleChange}
+              placeholder={isAge ? "Voer je leeftijd in..." : "Voer je antwoord in..."}
+              maxLength={maxLength}
+              min={isAge ? "1" : undefined}
+              max={isAge ? "120" : undefined}
+            />
+            <div className="text-xs text-muted-foreground mt-1 text-right">
+              {value.length}/{maxLength}
+            </div>
+          </div>
         );
     }
   };

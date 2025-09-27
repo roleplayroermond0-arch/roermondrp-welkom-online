@@ -45,7 +45,15 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout }: HeaderProps)
           <div className="flex items-center space-x-4">
             {user ? (
               <div className="flex items-center space-x-2">
-                <User className="h-5 w-5" />
+                {user.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt={user.username}
+                    className="h-6 w-6 rounded-full border"
+                  />
+                ) : (
+                  <User className="h-5 w-5" />
+                )}
                 <span className="text-sm">{user?.username}</span>
                 <Button variant="ghost" size="sm" onClick={onLogout}>
                   <LogOut className="h-4 w-4" />

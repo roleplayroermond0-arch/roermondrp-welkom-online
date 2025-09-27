@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, CheckCircle, XCircle, ShoppingBag } from "lucide-react";
+import { User, CheckCircle, XCircle, ShoppingBag, AlertTriangle, FileText } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/lib/supabase"
@@ -105,6 +105,22 @@ export const Dashboard = () => {
               >
                 <ShoppingBag className="mr-2 h-4 w-4" />
                 Open Tebex Shop
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => window.location.hash = '#complaints'}
+              >
+                <AlertTriangle className="mr-2 h-4 w-4" />
+                Klachten Indienen
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => window.location.hash = '#rules'}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Regels Bekijken
               </Button>
             </CardContent>
           </Card>

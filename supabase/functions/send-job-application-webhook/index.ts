@@ -7,7 +7,7 @@ serve(async (req) => {
   }
 
   try {
-    const { jobType, embed } = await req.json();
+    const { jobType, embed, userDiscordId } = await req.json();
     
     console.log(`Processing application for job type: ${jobType}`);
     console.log(`Available environment variables:`, {
@@ -114,7 +114,8 @@ serve(async (req) => {
 
   } catch (err) {
     console.error("Error in job application webhook function:", err);
-    return new Response(JSON.stringify({ error: err.message }), {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
     });

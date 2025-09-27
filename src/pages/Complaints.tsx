@@ -66,8 +66,8 @@ export const Complaints = () => {
           evidence: evidenceLink,
           user: {
             username: user.username || 'Onbekend',
-            discordId: user.id || 'Onbekend',
-            avatar: user.avatar_url
+            discordId: user.id || 'Onbekend', // This is already the Discord ID
+            avatar: user.avatar
           }
         }
       });
