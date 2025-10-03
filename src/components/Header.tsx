@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { User, LogOut } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface HeaderProps {
   activeTab: string;
@@ -10,13 +11,16 @@ interface HeaderProps {
 }
 
 export const Header = ({ activeTab, setActiveTab, user, onLogout }: HeaderProps) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
   const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'store', label: 'Store' },
-    { id: 'complaints', label: 'Klachten' },
-    { id: 'rules', label: 'Regels' },
-    { id: 'applications', label: 'Sollicitaties' },
-    { id: 'dashboard', label: 'Dashboard' },
+    { id: 'home', label: 'Home', path: '/' },
+    { id: 'store', label: 'Store', path: '/' },
+    { id: 'complaints', label: 'Klachten', path: '/complaints' },
+    { id: 'rules', label: 'Regels', path: '/rules' },
+    { id: 'applications', label: 'Sollicitaties', path: '/' },
+    { id: 'dashboard', label: 'Dashboard', path: '/' },
   ];
 
   return (
@@ -29,9 +33,17 @@ export const Header = ({ activeTab, setActiveTab, user, onLogout }: HeaderProps)
               {navItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => setActiveTab(item.id)}
+                  onClick={() => {
+                    if (item.path === '/complaints' || item.path === '/rules') {
+                      navigate(item.path);
+                    } else {
+                      setActiveTab(item.id);
+                    }
+                  }}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    activeTab === item.id
+                    (item.path === '/complaints' && location.pathname === '/complaints') ||
+                    (item.path === '/rules' && location.pathname === '/rules') ||
+                    (item.path === '/' && location.pathname === '/' && activeTab === item.id)
                       ? 'bg-primary text-primary-foreground'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   }`}

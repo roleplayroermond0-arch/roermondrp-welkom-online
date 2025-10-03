@@ -112,3 +112,32 @@ All colors MUST be HSL.
 .story-link {
   @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
 }
+
+/* Global blurred background with color overlay at 35% */
+body {
+  background-color: transparent;
+  position: relative;
+}
+
+/* Background image layer */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image: var(--app-bg-image, url('/placeholder.svg'));
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(6px) saturate(1.05);
+  transform: scale(1.04);
+}
+
+/* Color overlay preserving theme background at 35% opacity */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: hsl(var(--background) / 0.35);
+}

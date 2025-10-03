@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { AlertTriangle, Send } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from '@/integrations/supabase/client';
+import { Header } from '@/components/Header';
 
 // Webhook color mapping
 const COMPLAINT_COLORS: Record<string, number> = {
@@ -16,13 +17,19 @@ const COMPLAINT_COLORS: Record<string, number> = {
   overheid: 0x0000FF, // blauw
 };
 
-export const Complaints = () => {
+const ComplaintsPage = () => {
   const [complaint, setComplaint] = useState('');
   const [evidenceLink, setEvidenceLink] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [target, setTarget] = useState<string>("staff"); // standaard naar staff
+  const [activeTab, setActiveTab] = useState('complaints');
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    setActiveTab('home');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,8 +103,15 @@ export const Complaints = () => {
   };
 
   if (!user) {
-    return (
-      <div className="min-h-screen bg-background p-4">
+  return (
+    <div className="min-h-screen bg-background">
+      <Header 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab}
+        user={user}
+        onLogout={handleLogout}
+      />
+      <div className="p-4">
         <div className="container mx-auto max-w-2xl">
           <Card>
             <CardHeader className="text-center">
@@ -112,72 +126,91 @@ export const Complaints = () => {
           </Card>
         </div>
       </div>
-    );
+    </div>
+  );
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="container mx-auto max-w-2xl">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-6 w-6 text-destructive" />
-              Klacht Indienen
-            </CardTitle>
-            <CardDescription>
-              Dien hier je klacht in. Kies of deze naar Staff of Overheid moet worden gestuurd.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="target">Kies ontvanger *</Label>
-                <Select onValueChange={setTarget} value={target}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Kies ontvanger" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="staff">👮 Staff</SelectItem>
-                    <SelectItem value="overheid">🏛️ Overheid</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+    <div className="min-h-screen bg-background">
+      <Header 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab}
+        user={user}
+        onLogout={handleLogout}
+      />
+      <div className="p-4">
+        <div className="container mx-auto max-w-2xl">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <AlertTriangle className="h-6 w-6 text-destructive" />
+                Klacht Indienen
+              </CardTitle>
+              <CardDescription>
+                Dien hier je klacht in. Kies of deze naar Staff of Overheid moet worden gestuurd.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="target">Kies ontvanger *</Label>
+                  <Select onValueChange={setTarget} value={target}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Kies ontvanger" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="staff">👮 Staff</SelectItem>
+                      <SelectItem value="overheid">🏛️ Overheid</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="complaint">Klacht Beschrijving *</Label>
-                <Textarea
-                  id="complaint"
-                  placeholder="Beschrijf je klacht in detail..."
-                  value={complaint}
-                  onChange={(e) => setComplaint(e.target.value)}
-                  className="min-h-[120px]"
-                  required
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="complaint">Klacht Beschrijving *</Label>
+                  <Textarea
+                    id="complaint"
+                    placeholder="Beschrijf je klacht in detail..."
+                    value={complaint}
+                    onChange={(e) => setComplaint(e.target.value)}
+                    className="min-h-[120px]"
+                    required
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="evidence">Bewijs Link (optioneel)</Label>
-                <Input
-                  id="evidence"
-                  type="url"
-                  placeholder="https://imgur.com/... of YouTube link"
-                  value={evidenceLink}
-                  onChange={(e) => setEvidenceLink(e.target.value)}
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="evidence">Bewijs Link (optioneel)</Label>
+                  <Input
+                    id="evidence"
+                    type="url"
+                    placeholder="https://imgur.com/... of YouTube link"
+                    value={evidenceLink}
+                    onChange={(e) => setEvidenceLink(e.target.value)}
+                  />
+                </div>
 
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Indienen..." : (
-                  <>
-                    <Send className="mr-2 h-4 w-4" />
-                    Klacht Indienen
-                  </>
-                )}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? "Indienen..." : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />
+                      Klacht Indienen
+                    </>
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
 };
+
+const Complaints = () => {
+  return (
+    <AuthProvider>
+      <ComplaintsPage />
+    </AuthProvider>
+  );
+};
+
+export default Complaints;

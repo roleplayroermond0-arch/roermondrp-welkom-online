@@ -6,8 +6,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AuthCallback from "@/pages/AuthCallback";
+import Complaints from "./pages/Complaints";
+import Rules from "./components/Rules";
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
+import BackgroundVideo from "@/components/BackgroundVideo";
 
 
 const queryClient = new QueryClient();
@@ -42,12 +45,15 @@ useEffect(() => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <BackgroundVideo />
       <Toaster />
       <Sonner />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/complaints" element={<Complaints />} />
+          <Route path="/rules" element={<Rules />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

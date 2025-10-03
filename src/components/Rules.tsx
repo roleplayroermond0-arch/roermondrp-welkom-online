@@ -1,9 +1,19 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, Gavel } from "lucide-react";
+import { Header } from "@/components/Header";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { useState } from "react";
 
 
-export const Rules = () => {
+const RulesPage = () => {
+  const [activeTab, setActiveTab] = useState('rules');
+  const { user, signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    setActiveTab('home');
+  };
   // Eerst de algemene regels
   const ruleArticles = [
   
@@ -609,6 +619,12 @@ export const Rules = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Header 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab}
+        user={user}
+        onLogout={handleLogout}
+      />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-4">Server Regels</h1>
@@ -669,3 +685,13 @@ export const Rules = () => {
     </div>
   );
 };
+
+const Rules = () => {
+  return (
+    <AuthProvider>
+      <RulesPage />
+    </AuthProvider>
+  );
+};
+
+export default Rules;
