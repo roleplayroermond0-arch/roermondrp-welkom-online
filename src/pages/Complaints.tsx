@@ -131,39 +131,32 @@ const ComplaintsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab}
-        user={user}
-        onLogout={handleLogout}
-      />
-      <div className="p-4">
-        <div className="container mx-auto max-w-2xl">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="h-6 w-6 text-destructive" />
-                Klacht Indienen
-              </CardTitle>
-              <CardDescription>
-                Dien hier je klacht in. Kies of deze naar Staff of Overheid moet worden gestuurd.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="target">Kies ontvanger *</Label>
-                  <Select onValueChange={setTarget} value={target}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Kies ontvanger" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="staff">👮 Staff</SelectItem>
-                      <SelectItem value="overheid">🏛️ Overheid</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+    <div className="min-h-screen bg-background p-4">
+      <div className="container mx-auto max-w-2xl">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
+              <AlertTriangle className="h-5 w-5 md:h-6 md:w-6 text-destructive" />
+              Klacht Indienen
+            </CardTitle>
+            <CardDescription className="text-sm md:text-base">
+              Dien hier je klacht in. Kies of deze naar Staff of Overheid moet worden gestuurd.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="target">Kies ontvanger *</Label>
+                <Select onValueChange={setTarget} value={target}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Kies ontvanger" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="staff">👮 Staff</SelectItem>
+                    <SelectItem value="overheid">🏛️ Overheid</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="complaint">Klacht Beschrijving *</Label>

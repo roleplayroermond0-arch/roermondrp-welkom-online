@@ -16,7 +16,9 @@ serve(async (req) => {
       police: !!Deno.env.get("DISCORD_WEBHOOK_POLICE"),
       kmar: !!Deno.env.get("DISCORD_WEBHOOK_KMAR"),
       wegenwacht: !!Deno.env.get("DISCORD_WEBHOOK_WEGENWACHT"),
-      advocatuur: !!Deno.env.get("DISCORD_WEBHOOK_ADVOCATUUR")
+      advocatuur: !!Deno.env.get("DISCORD_WEBHOOK_ADVOCATUUR"),
+      dsi: !!Deno.env.get("DISCORD_WEBHOOK_DSI"),
+      brandweer: !!Deno.env.get("DISCORD_WEBHOOK_BRANDWEER")
     });
     
     if (!jobType || !embed) {
@@ -50,6 +52,12 @@ serve(async (req) => {
         break;
       case 'advocatuur':
         webhookUrl = Deno.env.get("DISCORD_WEBHOOK_ADVOCATUUR");
+        break;
+      case 'dsi':
+        webhookUrl = Deno.env.get("DISCORD_WEBHOOK_DSI");
+        break;
+      case 'brandweer':
+        webhookUrl = Deno.env.get("DISCORD_WEBHOOK_BRANDWEER");
         break;
       default:
         return new Response(

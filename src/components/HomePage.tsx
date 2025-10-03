@@ -45,25 +45,25 @@ export const HomePage = ({ setActiveTab }: HomePageProps) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-card to-background">
-      <div className="container mx-auto px-4 py-20">
+      <div className="container mx-auto px-4 py-8 md:py-20">
         {/* Hero Section */}
-        <div className="text-center mb-20">
-          <h1 className="text-7xl font-bold text-foreground mb-8">
+        <div className="text-center mb-12 md:mb-20">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-foreground mb-4 md:mb-8">
             Welkom bij <span className="text-primary">Roermond Roleplay</span>
           </h1>
-          <p className="text-2xl text-muted-foreground mb-16 max-w-4xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-8 md:mb-16 max-w-4xl mx-auto px-2">
             Ervaar de meest realistische roleplay ervaring in FiveM. 
             Word onderdeel van onze gemeenschap en beleef jouw eigen verhaal in een professionele Nederlandse omgeving.
           </p>
         </div>
 
         {/* Main Action Buttons */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-20">
-          <div className="bg-card p-10 rounded-xl border border-border hover:border-primary transition-colors group">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 max-w-5xl mx-auto mb-12 md:mb-20">
+          <div className="bg-card p-6 md:p-10 rounded-xl border border-border hover:border-primary transition-colors group">
             <div className="text-center">
-              <ExternalLink className="h-16 w-16 text-primary mx-auto mb-6 group-hover:scale-110 transition-transform" />
-              <h3 className="text-2xl font-semibold mb-6">Join Game</h3>
-              <p className="text-muted-foreground mb-8 text-lg">
+              <ExternalLink className="h-12 w-12 md:h-16 md:w-16 text-primary mx-auto mb-4 md:mb-6 group-hover:scale-110 transition-transform" />
+              <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-6">Join Game</h3>
+              <p className="text-muted-foreground mb-4 md:mb-8 text-sm md:text-lg">
                 Verbind direct met onze server en begin je roleplay avontuur.
               </p>
               <Button 
@@ -76,11 +76,11 @@ export const HomePage = ({ setActiveTab }: HomePageProps) => {
             </div>
           </div>
 
-          <div className="bg-card p-10 rounded-xl border border-border hover:border-primary transition-colors group">
+          <div className="bg-card p-6 md:p-10 rounded-xl border border-border hover:border-primary transition-colors group">
   <div className="text-center">
-    <ShoppingCart className="h-16 w-16 text-primary mx-auto mb-6 group-hover:scale-110 transition-transform" />
-    <h3 className="text-2xl font-semibold mb-6">Store</h3>
-    <p className="text-muted-foreground mb-8 text-lg">
+    <ShoppingCart className="h-12 w-12 md:h-16 md:w-16 text-primary mx-auto mb-4 md:mb-6 group-hover:scale-110 transition-transform" />
+    <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-6">Store</h3>
+    <p className="text-muted-foreground mb-4 md:mb-8 text-sm md:text-lg">
       Koop munten en upgrade je roleplay ervaring met premium items.
     </p>
     <a 
@@ -100,11 +100,11 @@ export const HomePage = ({ setActiveTab }: HomePageProps) => {
 </div>
 
 
-          <div className="bg-card p-10 rounded-xl border border-border hover:border-primary transition-colors group">
+          <div className="bg-card p-6 md:p-10 rounded-xl border border-border hover:border-primary transition-colors group sm:col-span-2 md:col-span-1">
             <div className="text-center">
-              <MessageCircle className="h-16 w-16 text-primary mx-auto mb-6 group-hover:scale-110 transition-transform" />
-              <h3 className="text-2xl font-semibold mb-6">Discord</h3>
-              <p className="text-muted-foreground mb-8 text-lg">
+              <MessageCircle className="h-12 w-12 md:h-16 md:w-16 text-primary mx-auto mb-4 md:mb-6 group-hover:scale-110 transition-transform" />
+              <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-6">Discord</h3>
+              <p className="text-muted-foreground mb-4 md:mb-8 text-sm md:text-lg">
                 Join onze Discord community voor support en de nieuwste updates.
               </p>
               <Button 
@@ -119,23 +119,23 @@ export const HomePage = ({ setActiveTab }: HomePageProps) => {
         </div>
 
         {/* About Section */}
-        <div className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-5xl font-bold mb-6">Over Roermond Roleplay</h2>
-            <p className="text-xl text-muted-foreground max-w-4xl mx-auto">
+        <div className="mb-12 md:mb-16">
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">Over Roermond Roleplay</h2>
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto px-2">
               RoermondRP is een Nederlandse FiveM roleplay server waar realisme en community centraal staan. 
               Wij bieden een unieke en uitgebreide roleplay ervaring voor spelers van alle niveaus.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
+          <div className="grid sm:grid-cols-2 gap-4 md:gap-8 mb-8 md:mb-12">
             {features.map((feature, index) => (
-              <Card key={index} className="p-8 hover:border-primary transition-colors">
-                <div className="flex items-start space-x-6">
-                  <feature.icon className="h-12 w-12 text-primary mt-2" />
+              <Card key={index} className="p-4 md:p-8 hover:border-primary transition-colors">
+                <div className="flex items-start space-x-3 md:space-x-6">
+                  <feature.icon className="h-8 w-8 md:h-12 md:w-12 text-primary mt-1 md:mt-2 flex-shrink-0" />
                   <div>
-                    <h3 className="text-2xl font-semibold mb-4">{feature.title}</h3>
-                    <p className="text-muted-foreground text-lg">{feature.description}</p>
+                    <h3 className="text-lg md:text-2xl font-semibold mb-2 md:mb-4">{feature.title}</h3>
+                    <p className="text-muted-foreground text-sm md:text-lg">{feature.description}</p>
                   </div>
                 </div>
               </Card>
@@ -144,10 +144,10 @@ export const HomePage = ({ setActiveTab }: HomePageProps) => {
         </div>
 
         {/* What is Roleplay & Jobs Section */}
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
-          <Card className="p-8">
-            <h2 className="text-3xl font-bold mb-6">Wat is Roleplay?</h2>
-            <div className="space-y-6 text-muted-foreground text-lg">
+        <div className="grid md:grid-cols-2 gap-4 md:gap-8 mb-12 md:mb-16">
+          <Card className="p-4 md:p-8">
+            <h2 className="text-xl md:text-3xl font-bold mb-4 md:mb-6">Wat is Roleplay?</h2>
+            <div className="space-y-3 md:space-y-6 text-muted-foreground text-sm md:text-lg">
               <p>
                 Roleplay betekent dat je een karakter speelt in een virtuele wereld. 
                 Je creëert een achtergrondverhaal, kiest een beroep, en interacteert met andere spelers 
@@ -164,25 +164,25 @@ export const HomePage = ({ setActiveTab }: HomePageProps) => {
             </div>
           </Card>
 
-          <Card className="p-8">
-            <h2 className="text-3xl font-bold mb-6">Beschikbare Jobs</h2>
-            <div className="grid grid-cols-2 gap-3 mb-6">
+          <Card className="p-4 md:p-8">
+            <h2 className="text-xl md:text-3xl font-bold mb-4 md:mb-6">Beschikbare Jobs</h2>
+            <div className="grid grid-cols-2 gap-2 md:gap-3 mb-4 md:mb-6">
               {jobs.map((job, index) => (
-                <div key={index} className="bg-muted px-4 py-3 rounded-md text-center font-medium">
+                <div key={index} className="bg-muted px-2 md:px-4 py-2 md:py-3 rounded-md text-center font-medium text-xs md:text-base">
                   {job}
                 </div>
               ))}
             </div>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-xs md:text-sm">
               Solliciteer via de Sollicitaties pagina voor officiële functies zoals Politie, Ambulance en ANWB.
             </p>
           </Card>
         </div>
 
         {/* Mission Statement */}
-        <Card className="p-12 bg-primary/5 border-primary/20">
-          <h2 className="text-4xl font-bold mb-6 text-center text-primary">Onze Missie</h2>
-          <p className="text-xl text-muted-foreground text-center max-w-4xl mx-auto leading-relaxed">
+        <Card className="p-6 md:p-12 bg-primary/5 border-primary/20">
+          <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6 text-center text-primary">Onze Missie</h2>
+          <p className="text-sm sm:text-base md:text-xl text-muted-foreground text-center max-w-4xl mx-auto leading-relaxed">
             "Wij streven ernaar om de beste Nederlandse FiveM roleplay ervaring te bieden, 
             waar elke speler zich welkom voelt en de kans krijgt om deel uit te maken van 
             meeslepende verhalen in een realistische omgeving."
