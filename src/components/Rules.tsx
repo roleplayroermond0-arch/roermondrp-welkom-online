@@ -609,22 +609,22 @@ export const Rules = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Server Regels</h1>
-          <p className="text-xl text-muted-foreground">
+      <div className="container mx-auto px-4 py-6 md:py-8">
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 md:mb-4">Server Regels</h1>
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
             Dit reglement geldt voor alle spelers en wordt gehandhaafd door het staff team.
           </p>
         </div>
 
-        <div className="space-y-6 mb-8">
+        <div className="space-y-4 md:space-y-6 mb-6 md:mb-8">
   {/* Algemene Server Regels */}
-  <h2 className="text-2xl font-bold mb-4">Algemene Server Regels</h2>
+  <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">Algemene Server Regels</h2>
   {ruleArticles.map((category, index) => (
-    <Card key={index} className="p-6">
-      <h3 className="text-xl font-bold mb-3">{category.title}</h3>
-      <p className="text-muted-foreground mb-4">{category.description}</p>
-      <ul className="list-disc pl-6 space-y-1">
+    <Card key={index} className="p-4 md:p-6">
+      <h3 className="text-base md:text-xl font-bold mb-2 md:mb-3">{category.title}</h3>
+      <p className="text-muted-foreground mb-3 md:mb-4 text-sm md:text-base">{category.description}</p>
+      <ul className="list-disc pl-4 md:pl-6 space-y-1 text-xs md:text-sm">
         {category.sanctions.map((sanction, sIndex) => (
           <li key={sIndex}>{sanction}</li>
         ))}
@@ -633,13 +633,13 @@ export const Rules = () => {
   ))}
 
   {/* Onderwereld Regels */}
-  <h2 className="text-2xl font-bold mb-4">Onderwereld Regels</h2>
-  <h2 className="text-muted-foreground mb-4">Onderstaand reglement bevat alle bepalingen voor onderwereld-activiteiten binnen Roermond Roleplay. Deze regels zijn opgesteld om een ordelijk en realistisch spelverloop te waarborgen. Spelers worden geacht deze bepalingen te kennen en te allen tijde na te leven. Alle straffen worden verdubbeld indien je minder dan 24 uur speeltijd hebt. Sancties blijven maximaal 60 dagen in je dossier staan. Het management behoudt het recht om eigen zaken te behandelen. Let op: een staffzaak moet binnen 24 uur worden aangemaakt, anders kan een stafflid niets meer voor je betekenen.</h2>
+  <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">Onderwereld Regels</h2>
+  <h2 className="text-muted-foreground mb-3 md:mb-4 text-sm md:text-base">Onderstaand reglement bevat alle bepalingen voor onderwereld-activiteiten binnen Roermond Roleplay. Deze regels zijn opgesteld om een ordelijk en realistisch spelverloop te waarborgen. Spelers worden geacht deze bepalingen te kennen en te allen tijde na te leven. Alle straffen worden verdubbeld indien je minder dan 24 uur speeltijd hebt. Sancties blijven maximaal 60 dagen in je dossier staan. Het management behoudt het recht om eigen zaken te behandelen. Let op: een staffzaak moet binnen 24 uur worden aangemaakt, anders kan een stafflid niets meer voor je betekenen.</h2>
   {underworldArticles.map((category, index) => (
-    <Card key={index} className="p-6">
-      <h3 className="text-xl font-bold mb-3">{category.title}</h3>
-      <p className="text-muted-foreground mb-4">{category.description}</p>
-      <ul className="list-disc pl-6 space-y-1">
+    <Card key={index} className="p-4 md:p-6">
+      <h3 className="text-base md:text-xl font-bold mb-2 md:mb-3">{category.title}</h3>
+      <p className="text-muted-foreground mb-3 md:mb-4 text-sm md:text-base">{category.description}</p>
+      <ul className="list-disc pl-4 md:pl-6 space-y-1 text-xs md:text-sm">
         {category.sanctions.map((sanction, sIndex) => (
           <li key={sIndex}>{sanction}</li>
         ))}
@@ -649,18 +649,18 @@ export const Rules = () => {
       
       
       </div>
-        <Card className="p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
-            <AlertTriangle className="h-6 w-6 text-destructive mr-2" />
+        <Card className="p-4 md:p-6 mb-6 md:mb-8">
+          <h2 className="text-lg md:text-2xl font-bold mb-3 md:mb-4 flex items-center">
+            <AlertTriangle className="h-5 w-5 md:h-6 md:w-6 text-destructive mr-2 flex-shrink-0" />
             Belangrijke Opmerkingen
           </h2>
           <div className="space-y-2">
             {importantNotes.map((note, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <Badge variant="destructive" className="text-xs">
+              <div key={index} className="flex items-start space-x-2">
+                <Badge variant="destructive" className="text-xs flex-shrink-0">
                   !
                 </Badge>
-                <span className="text-muted-foreground">{note}</span>
+                <span className="text-muted-foreground text-sm md:text-base">{note}</span>
               </div>
             ))}
           </div>

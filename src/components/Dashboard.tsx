@@ -45,7 +45,7 @@ export const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="container mx-auto max-w-2xl">
-        <h1 className="text-3xl font-bold mb-6 text-center">Dashboard</h1>
+        <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-center">Dashboard</h1>
 
         <div className="space-y-6">
           {/* Account Status */}

@@ -120,11 +120,11 @@ export const Complaints = () => {
       <div className="container mx-auto max-w-2xl">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-6 w-6 text-destructive" />
+            <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
+              <AlertTriangle className="h-5 w-5 md:h-6 md:w-6 text-destructive" />
               Klacht Indienen
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-sm md:text-base">
               Dien hier je klacht in. Kies of deze naar Staff of Overheid moet worden gestuurd.
             </CardDescription>
           </CardHeader>
