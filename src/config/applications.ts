@@ -290,5 +290,97 @@ export const JOBS: Job[] = [
         isRequired: true
       }
     ]
+  },
+  {
+    id: 'dsi',
+    name: 'DSI',
+    description: 'Onderzoek en opsporing van digitale criminaliteit',
+    isAcceptingApplications: true,
+    icon: '🔍',
+    
+    questions: [
+      {
+        id: 'name',
+        questionText: 'Wat is je volledige naam?',
+        questionType: 'text',
+        isRequired: true
+      },
+      {
+        id: 'age',
+        questionText: 'Wat is je leeftijd?',
+        questionType: 'text',
+        isRequired: true
+      },
+      {
+        id: 'experience',
+        questionText: 'Heb je ervaring met onderzoek of digitale technologie?',
+        questionType: 'textarea',
+        isRequired: true
+      },
+      {
+        id: 'availability',
+        questionText: 'Wanneer ben je beschikbaar?',
+        questionType: 'select',
+        options: [
+          'Doordeweeks overdag',
+          'Doordeweeks avond',
+          'Weekend',
+          'Flexibel'
+        ],
+        isRequired: true
+      },
+      {
+        id: 'motivation',
+        questionText: 'Waarom wil je bij de DSI werken?',
+        questionType: 'textarea',
+        isRequired: true
+      }
+    ]
+  },
+  {
+    id: 'brandweer',
+    name: 'Brandweer',
+    description: 'Bestrijding van branden en redding van mensen',
+    isAcceptingApplications: true,
+    icon: '🚒',
+    
+    questions: [
+      {
+        id: 'name',
+        questionText: 'Wat is je volledige naam?',
+        questionType: 'text',
+        isRequired: true
+      },
+      {
+        id: 'age',
+        questionText: 'Wat is je leeftijd?',
+        questionType: 'text',
+        isRequired: true
+      },
+      {
+        id: 'experience',
+        questionText: 'Heb je ervaring met hulpverlening of crisismanagement?',
+        questionType: 'textarea',
+        isRequired: true
+      },
+      {
+        id: 'availability',
+        questionText: 'Wanneer ben je beschikbaar?',
+        questionType: 'select',
+        options: [
+          'Doordeweeks overdag',
+          'Doordeweeks avond',
+          'Weekend',
+          'Flexibel'
+        ],
+        isRequired: true
+      },
+      {
+        id: 'motivation',
+        questionText: 'Waarom wil je bij de brandweer werken?',
+        questionType: 'textarea',
+        isRequired: true
+      }
+    ]
   }
 ];
